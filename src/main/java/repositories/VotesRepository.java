@@ -1,0 +1,20 @@
+package repositories;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import models.JuryVotes;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
+
+public class VotesRepository {
+
+    public Map<String, JuryVotes> getJuryVotes() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(
+                new File("src/main/resources/votes.json"),
+                new TypeReference<>() {
+                });
+    }
+}
