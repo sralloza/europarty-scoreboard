@@ -2,7 +2,6 @@ package repositories;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import models.Jury;
 
 import java.io.File;

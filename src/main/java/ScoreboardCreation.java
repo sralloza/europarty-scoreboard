@@ -15,6 +15,7 @@ public class ScoreboardCreation {
                 new ScorewizRepository(),
                 new VotesRepository());
 
-        scoreWizService.createScorewiz("Test " + LocalDateTime.now());
+        scoreWizService.createScorewiz(
+                "Europarty 2022 - Test " + LocalDateTime.now());
     }
 }
