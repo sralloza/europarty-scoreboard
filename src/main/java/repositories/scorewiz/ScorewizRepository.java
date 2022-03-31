@@ -10,7 +10,6 @@ import org.openqa.selenium.support.ui.Select;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,14 +21,6 @@ public class ScorewizRepository extends BaseScorewizRepository {
     public ScorewizRepository() {
         super();
     }
-
-
-    public void registerAllJuriesVotes(Map<String, Votes> userVotes) {
-        for (Map.Entry<String, Votes> entry : userVotes.entrySet()) {
-            registerSingleJuryVotes(entry.getKey(), entry.getValue());
-        }
-    }
-
 
     public void createScoreboard(String name) {
         driver.get(getNewURL());
@@ -78,7 +69,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
 
                     WebElement juryInput = driver.findElement(By.id("name" + (i + 1)));
                     juryInput.clear();
-                    juryInput.sendKeys(jury.getName());
+                    juryInput.sendKeys(jury.getLocalName());
                 }
         );
 
@@ -159,9 +150,9 @@ public class ScorewizRepository extends BaseScorewizRepository {
         }
     }
 
-    private void registerSingleJuryVotes(String juryName, Votes userVotes) {
-        String juryVoteURL = Optional.ofNullable(juryMapping.get(juryName))
-                .orElseThrow(() -> new RuntimeException("No jury name  found for " + juryName +
+    public void registerSingleJuryVotes(Jury jury, Votes userVotes) {
+        String juryVoteURL = Optional.ofNullable(juryMapping.get(jury.getLocalName()))
+                .orElseThrow(() -> new RuntimeException("No jury name  found for " + jury +
                         " in jury mapping " + juryMapping));
 
         driver.get(juryVoteURL);

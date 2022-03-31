@@ -6,17 +6,31 @@ import lombok.SneakyThrows;
 import models.Jury;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class JuryRepository {
+    private List<Jury> juryList;
 
-    @SneakyThrows
-    public static List<Jury> getJuries() {
+    public List<Jury> getJuries() throws IOException {
+        if (juryList != null) {
+            return juryList;
+        }
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(
+        juryList = mapper.readValue(
                 new File("src/main/resources/juries.json"),
                 new TypeReference<>() {
                 });
+        return juryList;
+    }
+
+    public Jury getByName(String name) {
+        for (Jury jury : juryList) {
+            if (jury.getName().equals(name)) {
+                return jury;
+            }
+        }
+        return null;
     }
 
 }

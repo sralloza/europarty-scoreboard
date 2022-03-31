@@ -1,3 +1,4 @@
+import repositories.JuryRepository;
 import repositories.ParticipantRepository;
 import repositories.VotesRepository;
 import repositories.scorewiz.ScorewizRepository;
@@ -9,9 +10,10 @@ import java.time.LocalDateTime;
 public class ScoreboardCreation {
     public static void main(String[] args) throws IOException {
         ScoreWizService scoreWizService = new ScoreWizService(
-                new VotesRepository(),
+                new JuryRepository(),
+                new ParticipantRepository(),
                 new ScorewizRepository(),
-                new ParticipantRepository());
+                new VotesRepository());
 
         scoreWizService.createScorewiz("Test " + LocalDateTime.now());
     }
