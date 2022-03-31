@@ -1,9 +1,11 @@
 package services;
 
 import models.Jury;
+import models.Televote;
 import models.Votes;
 import repositories.JuryRepository;
 import repositories.ParticipantRepository;
+import repositories.TelevoteRepository;
 import repositories.VoteRepository;
 import repositories.scorewiz.ScorewizRepository;
 
@@ -16,15 +18,18 @@ public class ScoreWizService {
     private final ParticipantRepository participantRepository;
     private final ScorewizRepository scorewizRepository;
     private final VoteRepository votesRepository;
+    private final TelevoteRepository televoteRepository;
 
     public ScoreWizService(JuryRepository juryRepository,
                            ParticipantRepository participantRepository,
                            ScorewizRepository scorewizRepository,
-                           VoteRepository votesRepository) {
+                           VoteRepository votesRepository,
+                           TelevoteRepository televoteRepository) {
         this.juryRepository = juryRepository;
         this.votesRepository = votesRepository;
         this.scorewizRepository = scorewizRepository;
         this.participantRepository = participantRepository;
+        this.televoteRepository = televoteRepository;
     }
 
     public void createScorewiz(String name) throws IOException {
@@ -35,6 +40,9 @@ public class ScoreWizService {
         Map<String, Votes> votes = votesRepository.getJuryVotes();
         validateVotes(participants, votes);
 
+        List<Televote> televotes = televoteRepository.getTelevotes();
+        validateTelevotes(participants, televotes);
+
         scorewizRepository.login();
         scorewizRepository.createScoreboard(name);
 
@@ -43,6 +51,7 @@ public class ScoreWizService {
 
         scorewizRepository.genJuryMapping();
         registerAllJuriesVotes(votes);
+        scorewizRepository.setTelevotes(televotes);
 
         scorewizRepository.logout();
     }
@@ -53,7 +62,11 @@ public class ScoreWizService {
         List<String> requestedParticipants = participantRepository.getParticipants();
         validateVotes(requestedParticipants, juryVotes);
 
+        List<Televote> televotes = televoteRepository.getTelevotes();
+        validateTelevotes(requestedParticipants, televotes);
+
         scorewizRepository.login();
+        scorewizRepository.findFirstScoreboard();
         scorewizRepository.processScorewizVars();
         scorewizRepository.genJuryMapping();
 
@@ -63,10 +76,11 @@ public class ScoreWizService {
         }
 
         registerAllJuriesVotes(juryVotes);
+        scorewizRepository.setTelevotes(televotes);
         scorewizRepository.logout();
     }
 
-    private void registerAllJuriesVotes(Map<String, Votes> juryVotes) {
+    private void registerAllJuriesVotes(Map<String, Votes> juryVotes) throws IOException {
 
         for (Map.Entry<String, Votes> entry : juryVotes.entrySet()) {
             Jury jury = juryRepository.getByName(entry.getKey());
@@ -76,13 +90,19 @@ public class ScoreWizService {
     }
 
     private void validateVotes(List<String> savedParticipants, Map<String, Votes> juryVotes) {
-        juryVotes.forEach((username, userVote) -> {
-            userVote.getAllPoints().forEach(s -> {
-                if (!savedParticipants.contains(s)) {
-                    throw new RuntimeException("Participant " + s + " not found ("
-                            + username + " voted for it)");
-                }
-            });
+        juryVotes.forEach((username, userVote) -> userVote.getAllPoints().forEach(s -> {
+            if (!savedParticipants.contains(s)) {
+                throw new RuntimeException("Participant " + s + " not found ("
+                        + username + " voted for it)");
+            }
+        }));
+    }
+
+    private void validateTelevotes(List<String> savedParticipants, List<Televote> televotes) {
+        televotes.forEach(t -> {
+            if (!savedParticipants.contains(t.getCountry())) {
+                throw new RuntimeException("Invalid televote, participant not found " + t.getCountry());
+            }
         });
     }
 

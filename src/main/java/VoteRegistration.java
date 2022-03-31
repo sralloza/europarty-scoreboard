@@ -1,5 +1,6 @@
 import repositories.JuryRepository;
 import repositories.ParticipantRepository;
+import repositories.TelevoteRepository;
 import repositories.VoteRepository;
 import repositories.scorewiz.ScorewizRepository;
 import services.ScoreWizService;
@@ -12,7 +13,8 @@ public class VoteRegistration {
                 new JuryRepository(),
                 new ParticipantRepository(),
                 new ScorewizRepository(),
-                new VoteRepository());
+                new VoteRepository(),
+                new TelevoteRepository());
 
         service.setJuryVotes();
     }

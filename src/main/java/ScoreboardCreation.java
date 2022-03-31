@@ -1,5 +1,6 @@
 import repositories.JuryRepository;
 import repositories.ParticipantRepository;
+import repositories.TelevoteRepository;
 import repositories.VoteRepository;
 import repositories.scorewiz.ScorewizRepository;
 import services.ScoreWizService;
@@ -13,7 +14,8 @@ public class ScoreboardCreation {
                 new JuryRepository(),
                 new ParticipantRepository(),
                 new ScorewizRepository(),
-                new VoteRepository());
+                new VoteRepository(),
+                new TelevoteRepository());
 
         scoreWizService.createScorewiz(
                 "Europarty 2022 - Test " + LocalDateTime.now());

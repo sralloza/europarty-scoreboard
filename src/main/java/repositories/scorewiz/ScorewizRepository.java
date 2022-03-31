@@ -2,6 +2,7 @@ package repositories.scorewiz;
 
 import lombok.extern.slf4j.Slf4j;
 import models.Jury;
+import models.Televote;
 import models.Votes;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -171,5 +172,38 @@ public class ScorewizRepository extends BaseScorewizRepository {
         WebElement submitButton = driver.findElement(By.id("votesSubmit"));
         scrollToElement(submitButton);
         submitButton.click();
+    }
+
+    public void setTelevotes(List<Televote> televotes) {
+        String televotesURL = getActionUrl("setTelevote");
+        driver.get(televotesURL);
+        waitPageLoads();
+
+        televotes.forEach(televote -> {
+                    System.out.println("Setting televote " + televote);
+                    WebElement input = driver.findElements(By.className("select")).stream()
+                            .filter(e -> e.getText().equals(televote.getCountry()))
+                            .findFirst()
+                            .orElseThrow(() -> new RuntimeException("No country found for " + televote))
+                            .findElement(By.className("int"));
+
+                    scrollToElement(input);
+                    input.clear();
+                    input.sendKeys(televote.getVotes().toString());
+                }
+        );
+
+        WebElement namesSubmitBtn = driver.findElement(By.id("namesSubmit"));
+        scrollToElement(namesSubmitBtn);
+        namesSubmitBtn.click();
+    }
+
+    public void findFirstScoreboard() {
+        WebElement editBtn = driver.findElements(By.tagName("a")).stream()
+                .filter(e -> e.getText().equals("EDIT"))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No edit button found"));
+        scrollToElement(editBtn);
+        editBtn.click();
     }
 }

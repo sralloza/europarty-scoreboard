@@ -23,8 +23,8 @@ public class JuryRepository {
         return juryList;
     }
 
-    public Jury getByName(String name) {
-        for (Jury jury : juryList) {
+    public Jury getByName(String name) throws IOException {
+        for (Jury jury : getJuries()) {
             if (jury.getName().equals(name)) {
                 return jury;
             }
