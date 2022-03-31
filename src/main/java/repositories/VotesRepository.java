@@ -2,7 +2,7 @@ package repositories;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import models.JuryVotes;
+import models.Votes;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class VotesRepository {
 
-    public Map<String, JuryVotes> getJuryVotes() throws IOException {
+    public Map<String, Votes> getJuryVotes() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(
                 new File("src/main/resources/votes.json"),

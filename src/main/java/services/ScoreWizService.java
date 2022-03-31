@@ -1,7 +1,7 @@
 package services;
 
 import models.Jury;
-import models.JuryVotes;
+import models.Votes;
 import repositories.JuryRepository;
 import repositories.ParticipantRepository;
 import repositories.VotesRepository;
@@ -29,7 +29,7 @@ public class ScoreWizService {
         List<Jury> juries = JuryRepository.getJuries();
         List<String> participants = participantRepository.getParticipants();
 
-        Map<String, JuryVotes> votes = votesRepository.getJuryVotes();
+        Map<String, Votes> votes = votesRepository.getJuryVotes();
         votes.forEach((username, userVote) ->
                 checkAllParticipantsInVotesExist(participants, username, userVote));
 
@@ -44,7 +44,7 @@ public class ScoreWizService {
     }
 
     public void setJuryVotes() throws IOException {
-        Map<String, JuryVotes> juryVotes = votesRepository.getJuryVotes();
+        Map<String, Votes> juryVotes = votesRepository.getJuryVotes();
 
         scorewizRepository.login();
         scorewizRepository.processScorewizVars();
@@ -61,7 +61,7 @@ public class ScoreWizService {
 
     private void checkAllParticipantsInVotesExist(List<String> savedParticipants,
                                                   String username,
-                                                  JuryVotes juryVotes) {
+                                                  Votes juryVotes) {
         juryVotes.getAllPoints().forEach(s -> {
             if (!savedParticipants.contains(s)) {
                 throw new RuntimeException("Participant " + s + " not found ("

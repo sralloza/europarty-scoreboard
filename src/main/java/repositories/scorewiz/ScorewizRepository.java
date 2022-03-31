@@ -2,7 +2,7 @@ package repositories.scorewiz;
 
 import lombok.extern.slf4j.Slf4j;
 import models.Jury;
-import models.JuryVotes;
+import models.Votes;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
@@ -24,8 +24,8 @@ public class ScorewizRepository extends BaseScorewizRepository {
     }
 
 
-    public void registerAllJuriesVotes(Map<String, JuryVotes> userVotes) {
-        for (Map.Entry<String, JuryVotes> entry : userVotes.entrySet()) {
+    public void registerAllJuriesVotes(Map<String, Votes> userVotes) {
+        for (Map.Entry<String, Votes> entry : userVotes.entrySet()) {
             registerSingleJuryVotes(entry.getKey(), entry.getValue());
         }
     }
@@ -159,7 +159,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
         }
     }
 
-    private void registerSingleJuryVotes(String juryName, JuryVotes userVotes) {
+    private void registerSingleJuryVotes(String juryName, Votes userVotes) {
         String juryVoteURL = Optional.ofNullable(juryMapping.get(juryName))
                 .orElseThrow(() -> new RuntimeException("No jury name  found for " + juryName +
                         " in jury mapping " + juryMapping));
