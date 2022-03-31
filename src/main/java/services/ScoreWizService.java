@@ -4,7 +4,7 @@ import models.Jury;
 import models.Votes;
 import repositories.JuryRepository;
 import repositories.ParticipantRepository;
-import repositories.VotesRepository;
+import repositories.VoteRepository;
 import repositories.scorewiz.ScorewizRepository;
 
 import java.io.IOException;
@@ -15,12 +15,12 @@ public class ScoreWizService {
     private final JuryRepository juryRepository;
     private final ParticipantRepository participantRepository;
     private final ScorewizRepository scorewizRepository;
-    private final VotesRepository votesRepository;
+    private final VoteRepository votesRepository;
 
     public ScoreWizService(JuryRepository juryRepository,
                            ParticipantRepository participantRepository,
                            ScorewizRepository scorewizRepository,
-                           VotesRepository votesRepository) {
+                           VoteRepository votesRepository) {
         this.juryRepository = juryRepository;
         this.votesRepository = votesRepository;
         this.scorewizRepository = scorewizRepository;

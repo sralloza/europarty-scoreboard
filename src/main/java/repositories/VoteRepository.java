@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-public class VotesRepository {
+public class VoteRepository {
 
     public Map<String, Votes> getJuryVotes() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
