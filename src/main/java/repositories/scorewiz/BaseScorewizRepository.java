@@ -72,14 +72,13 @@ public class BaseScorewizRepository {
     }
 
     protected void scrollToElement(WebElement element) {
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+        runJavascript("arguments[0].scrollIntoView(true);", element);
         waitPageLoads();
     }
 
     protected void waitPageLoads() {
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(
-                webDriver -> ((JavascriptExecutor) webDriver)
-                        .executeScript("return document.readyState").equals("complete"));
+                webDriver -> runJavascript("return document.readyState").equals("complete"));
     }
 
     protected void removeHeader() {
@@ -102,5 +101,9 @@ public class BaseScorewizRepository {
         WebElement namesSubmitBtn = driver.findElement(selector);
         scrollToElement(namesSubmitBtn);
         namesSubmitBtn.click();
+    }
+
+    protected Object runJavascript(String script, Object... args) {
+        return ((JavascriptExecutor) driver).executeScript(script, args);
     }
 }

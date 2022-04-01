@@ -5,7 +5,6 @@ import models.Jury;
 import models.Televote;
 import models.Votes;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
@@ -51,8 +50,8 @@ public class ScorewizRepository extends BaseScorewizRepository {
         String juriesURL = getActionUrl("setOptions", "juries");
         driver.get(juriesURL);
         waitPageLoads();
-        ((JavascriptExecutor) driver).executeScript("document.getElementsByTagName(\"header\")[0].remove()");
 
+        removeHeader();
 
         IntStream.range(0, juries.size()).forEach(i -> {
                     Jury jury = juries.get(i);
@@ -80,8 +79,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("No participant found for " + participant));
     }
-
-
+    
     public List<String> getParticipants() {
         String participantsURL = getActionUrl("setOptions", "participants");
         driver.get(participantsURL);
@@ -152,7 +150,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
         driver.get(juryVoteURL);
         waitPageLoads();
 
-        ((JavascriptExecutor) driver).executeScript("noDnd()");
+        runJavascript("noDnd()");
         waitPageLoads();
 
         IntStream.of(1, 2, 3, 4, 5, 6, 7, 8, 10, 12).forEach(i -> {
