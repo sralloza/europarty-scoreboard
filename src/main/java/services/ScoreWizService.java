@@ -1,5 +1,7 @@
 package services;
 
+import exceptions.CountryNotFoundException;
+import exceptions.ParticipantsValidationEception;
 import models.Jury;
 import models.Televote;
 import models.Votes;
@@ -23,13 +25,13 @@ public class ScoreWizService {
     public ScoreWizService(JuryRepository juryRepository,
                            ParticipantRepository participantRepository,
                            ScorewizRepository scorewizRepository,
-                           VoteRepository votesRepository,
-                           TelevoteRepository televoteRepository) {
+                           TelevoteRepository televoteRepository,
+                           VoteRepository votesRepository) {
         this.juryRepository = juryRepository;
-        this.votesRepository = votesRepository;
-        this.scorewizRepository = scorewizRepository;
         this.participantRepository = participantRepository;
+        this.scorewizRepository = scorewizRepository;
         this.televoteRepository = televoteRepository;
+        this.votesRepository = votesRepository;
     }
 
     public void createScoreboard(String name) throws IOException {
@@ -72,7 +74,7 @@ public class ScoreWizService {
 
         List<String> savedParticipants = scorewizRepository.getParticipants();
         if (!savedParticipants.equals(requestedParticipants)) {
-            throw new RuntimeException("Requested participants are not the same as in the database");
+            throw new ParticipantsValidationEception(requestedParticipants, savedParticipants);
         }
 
         registerAllJuriesVotes(juryVotes);
@@ -86,22 +88,20 @@ public class ScoreWizService {
             Jury jury = juryRepository.getByName(entry.getKey());
             scorewizRepository.registerSingleJuryVotes(jury, entry.getValue());
         }
-
     }
 
     private void validateVotes(List<String> savedParticipants, Map<String, Votes> juryVotes) {
         juryVotes.forEach((username, userVote) -> userVote.getAllPoints().forEach(s -> {
             if (!savedParticipants.contains(s)) {
-                throw new RuntimeException("Participant " + s + " not found ("
-                        + username + " voted for it)");
+                throw new CountryNotFoundException(s, username);
             }
         }));
     }
 
     private void validateTelevotes(List<String> savedParticipants, List<Televote> televotes) {
-        televotes.forEach(t -> {
-            if (!savedParticipants.contains(t.getCountry())) {
-                throw new RuntimeException("Invalid televote, participant not found " + t.getCountry());
+        televotes.forEach(televote -> {
+            if (!savedParticipants.contains(televote.getCountry())) {
+                throw new CountryNotFoundException(televote);
             }
         });
     }
@@ -109,10 +109,8 @@ public class ScoreWizService {
     private void validateJuries(List<String> savedParticipants, List<Jury> juries) {
         juries.forEach(jury -> {
             if (!savedParticipants.contains(jury.getCountry())) {
-                throw new RuntimeException("Jury " + jury.getCountry() + " not found ("
-                        + jury + " requested it)");
+                throw new CountryNotFoundException(jury);
             }
         });
     }
-
 }

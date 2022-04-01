@@ -1,6 +1,8 @@
 package repositories.scorewiz;
 
-import lombok.extern.slf4j.Slf4j;
+import exceptions.CountryNotFoundException;
+import exceptions.JuryMappingNotFoundException;
+import exceptions.JuryNameNotFoundException;
 import models.Jury;
 import models.Televote;
 import models.Votes;
@@ -20,7 +22,6 @@ import static repositories.scorewiz.SubmitType.ID_NAMES_SUBMIT;
 import static repositories.scorewiz.SubmitType.ID_VOTES_SUBMIT;
 import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
 
-@Slf4j
 public class ScorewizRepository extends BaseScorewizRepository {
     public ScorewizRepository() {
         super();
@@ -69,7 +70,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
         submit(ID_NAMES_SUBMIT);
     }
 
-    
+
     public List<String> getParticipants() {
         String participantsURL = getActionUrl("setOptions", "participants");
         driver.get(participantsURL);
@@ -120,14 +121,13 @@ public class ScorewizRepository extends BaseScorewizRepository {
         }
 
         if (juryMapping.isEmpty()) {
-            throw new RuntimeException("No jury mapping found");
+            throw new JuryMappingNotFoundException();
         }
     }
 
     public void registerSingleJuryVotes(Jury jury, Votes userVotes) {
         String juryVoteURL = Optional.ofNullable(juryMapping.get(jury.getLocalName()))
-                .orElseThrow(() -> new RuntimeException("No jury name  found for " + jury +
-                        " in jury mapping " + juryMapping));
+                .orElseThrow(() -> new JuryNameNotFoundException(jury, juryMapping));
 
         driver.get(juryVoteURL);
         waitPageLoads();
@@ -155,7 +155,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
                     WebElement input = driver.findElements(By.className("select")).stream()
                             .filter(e -> e.getText().equals(televote.getCountry()))
                             .findFirst()
-                            .orElseThrow(() -> new RuntimeException("No country found for " + televote))
+                            .orElseThrow(() -> new CountryNotFoundException(televote))
                             .findElement(By.className("int"));
 
                     scrollToElement(input);

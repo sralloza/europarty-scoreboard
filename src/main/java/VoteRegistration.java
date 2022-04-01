@@ -13,8 +13,8 @@ public class VoteRegistration {
                 new JuryRepository(),
                 new ParticipantRepository(),
                 new ScorewizRepository(),
-                new VoteRepository(),
-                new TelevoteRepository());
+                new TelevoteRepository(),
+                new VoteRepository());
 
         service.setJuryVotes();
     }

@@ -14,10 +14,9 @@ public class ScoreboardCreation {
                 new JuryRepository(),
                 new ParticipantRepository(),
                 new ScorewizRepository(),
-                new VoteRepository(),
-                new TelevoteRepository());
+                new TelevoteRepository(),
+                new VoteRepository());
 
-        scoreWizService.createScoreboard(
-                "Europarty 2022 - Test " + LocalDateTime.now());
+        scoreWizService.createScoreboard("Europarty 2022 - Test " + LocalDateTime.now());
     }
 }

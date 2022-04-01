@@ -24,6 +24,7 @@ public class BaseScorewizRepository {
     private static final String WEBDRIVER_PATH = Config.getInstance().getProperty("webdriver.chrome.driver");
     protected final WebDriver driver;
 
+    // TODO: rename juryMapping
     protected Map<String, String> juryMapping;
     protected String scorewizSid;
     protected String scorewizPass;
