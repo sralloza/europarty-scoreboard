@@ -16,12 +16,12 @@ import java.util.Map;
 import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
 
 public class BaseScorewizRepository {
-    protected static final String BASE_URL = Config.getInstance().getProperty("scorewiz.baseUrl");
-    protected static final Boolean HEADLESS = !Config.getInstance().getProperty("debug").equals("true");
-    protected static final String SCOREWIZ_PASSWORD = Config.getInstance().getProperty("scorewiz.password");
-    protected static final String SCOREWIZ_USERNAME = Config.getInstance().getProperty("scorewiz.username");
+    protected static final String BASE_URL = Config.get("scorewiz.baseUrl");
+    protected static final Boolean HEADLESS = !Config.get("debug").equals("true");
+    protected static final String SCOREWIZ_PASSWORD = Config.get("scorewiz.password");
+    protected static final String SCOREWIZ_USERNAME = Config.get("scorewiz.username");
     protected static final String URL_TEMPLATE = BASE_URL + "/%s/%s/%s";
-    private static final String WEBDRIVER_PATH = Config.getInstance().getProperty("webdriver.chrome.driver");
+    private static final String WEBDRIVER_PATH = Config.get("webdriver.chrome.driver");
     protected final WebDriver driver;
 
     // TODO: rename juryMapping

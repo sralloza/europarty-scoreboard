@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class Config {
+    private static Config instance;
     private final Properties properties;
 
     public Config() {
@@ -19,10 +20,14 @@ public class Config {
     }
 
     public static Config getInstance() {
-        return new Config();
+        if(instance == null) {
+            instance = new Config();
+        }
+
+        return instance;
     }
 
-    public String getProperty(String key) {
-        return properties.getProperty(key);
+    public static String get(String key) {
+        return getInstance().properties.getProperty(key);
     }
 }

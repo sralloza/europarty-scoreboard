@@ -1,3 +1,4 @@
+import config.Config;
 import repositories.JuryRepository;
 import repositories.ParticipantRepository;
 import repositories.TelevoteRepository;
@@ -17,6 +18,10 @@ public class ScoreboardCreation {
                 new TelevoteRepository(),
                 new VoteRepository());
 
-        scoreWizService.createScoreboard("Europarty 2022 - Test " + LocalDateTime.now());
+        String scoreboardName = Config.get("scorewiz.scoreboard.name");
+        if (Config.get("debug").equals("true")) {
+            scoreboardName += " - Test " + LocalDateTime.now();
+        }
+        scoreWizService.createScoreboard(scoreboardName);
     }
 }
