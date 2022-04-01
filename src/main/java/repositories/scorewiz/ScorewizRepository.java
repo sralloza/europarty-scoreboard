@@ -50,7 +50,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
     }
 
     public void setJuries(List<Jury> juries) {
-        String juriesURL = getActionUrl("setOptions") + "/juries";
+        String juriesURL = getActionUrl("setOptions", "juries");
         driver.get(juriesURL);
         waitPageLoads();
         ((JavascriptExecutor) driver).executeScript("document.getElementsByTagName(\"header\")[0].remove()");
@@ -88,7 +88,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
 
 
     public List<String> getParticipants() {
-        String participantsURL = getActionUrl("setOptions") + "/participants";
+        String participantsURL = getActionUrl("setOptions", "participants");
         driver.get(participantsURL);
         waitPageLoads();
 
@@ -104,7 +104,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
     }
 
     public void setParticipants(List<String> participants) {
-        String participantsURL = getActionUrl("setOptions") + "/participants";
+        String participantsURL = getActionUrl("setOptions", "participants");
         driver.get(participantsURL);
         waitPageLoads();
         removeHeader();

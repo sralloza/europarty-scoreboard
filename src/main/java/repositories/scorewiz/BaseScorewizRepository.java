@@ -38,6 +38,9 @@ public class BaseScorewizRepository {
         driver = new ChromeDriver(options);
     }
 
+    protected String getActionUrl(String action, String extraAction) {
+        return getActionUrl(action) + "/" + extraAction;
+    }
 
     protected String getActionUrl(String action) {
         return String.format(URL_TEMPLATE, action, scorewizSid, scorewizPass);
