@@ -32,7 +32,7 @@ public class ScoreWizService {
         this.televoteRepository = televoteRepository;
     }
 
-    public void createScorewiz(String name) throws IOException {
+    public void createScoreboard(String name) throws IOException {
         List<Jury> juries = juryRepository.getJuries();
         List<String> participants = participantRepository.getParticipants();
         validateJuries(participants, juries);
