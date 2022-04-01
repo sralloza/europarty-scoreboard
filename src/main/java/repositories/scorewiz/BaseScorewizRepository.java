@@ -10,6 +10,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 
 import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
@@ -116,14 +117,22 @@ public class BaseScorewizRepository {
         return ((JavascriptExecutor) driver).executeScript(script, args);
     }
 
-    protected Object runJavascript(String script, WebElement element) {
-        return ((JavascriptExecutor) driver).executeScript(script, element);
-    }
-
-    protected void setCountryInFormWithClick(String country, Integer index) {
+    protected void setCountryInFormWithAutocomplete(String country, Integer index) {
         WebElement flagInput = driver.findElement(By.id("flag-select-" + (index)));
         scrollToElement(flagInput);
         flagInput.clear();
         flagInput.sendKeys(country);
+
+        List<WebElement> selectors = driver.findElements(By.className("autocomplete-option"));
+        WebElement selector = findSelector(selectors, country);
+        selector.click();
+        waitPageLoads();
+    }
+
+    private WebElement findSelector(List<WebElement> selectors, String participant) {
+        return selectors.stream()
+                .filter(s -> s.getText().equalsIgnoreCase(participant))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No participant found for " + participant));
     }
 }

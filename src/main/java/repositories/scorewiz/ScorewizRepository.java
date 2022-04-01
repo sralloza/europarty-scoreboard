@@ -59,15 +59,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
 
         IntStream.range(0, juries.size()).forEach(i -> {
                     Jury jury = juries.get(i);
-                    WebElement flagInput = driver.findElement(By.id("flag-select-" + (i + 1)));
-                    scrollToElement(flagInput);
-                    flagInput.clear();
-                    flagInput.sendKeys(jury.getCountry());
-
-                    List<WebElement> selectors = driver.findElements(By.className("autocomplete-option"));
-                    WebElement selector = findSelector(selectors, jury.getCountry());
-                    selector.click();
-                    waitPageLoads();
+                    setCountryInFormWithAutocomplete(jury.getCountry(), i + 1);
 
                     WebElement juryInput = driver.findElement(By.id("name" + (i + 1)));
                     juryInput.clear();
@@ -77,12 +69,6 @@ public class ScorewizRepository extends BaseScorewizRepository {
         submit(ID_NAMES_SUBMIT);
     }
 
-    private WebElement findSelector(List<WebElement> selectors, String participant) {
-        return selectors.stream()
-                .filter(s -> s.getText().equalsIgnoreCase(participant))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("No participant found for " + participant));
-    }
     
     public List<String> getParticipants() {
         String participantsURL = getActionUrl("setOptions", "participants");
@@ -108,15 +94,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
 
         IntStream.range(0, participants.size()).forEach(i -> {
                     String participant = participants.get(i);
-                    System.out.println("Setting participant " + (i + 1) + ": " + participant);
-                    WebElement input = driver.findElement(By.id("flag-select-" + (i + 1)));
-                    scrollToElement(input);
-                    input.clear();
-                    input.sendKeys(participant);
-
-                    List<WebElement> selectors = driver.findElements(By.className("autocomplete-option"));
-                    WebElement selector = findSelector(selectors, participant);
-                    selector.click();
+                    setCountryInFormWithAutocomplete(participant, i + 1);
                 }
         );
 
