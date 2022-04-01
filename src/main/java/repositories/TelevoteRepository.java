@@ -16,7 +16,7 @@ public class TelevoteRepository {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Integer> rawTelevotes = mapper.readValue(
                 new File("src/main/resources/televotes.json"),
-                new TypeReference<Map<String, Integer>>() {
+                new TypeReference<>() {
                 });
         return rawTelevotes.entrySet().stream()
                 .map(entry -> new Televote(entry.getKey(), entry.getValue()))
