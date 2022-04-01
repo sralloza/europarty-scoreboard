@@ -12,6 +12,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.Map;
 
+import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
+
 public class BaseScorewizRepository {
     protected static final String BASE_URL = Config.getInstance().getProperty("scorewiz.baseUrl");
     protected static final Boolean HEADLESS = !Config.getInstance().getProperty("debug").equals("true");
@@ -63,7 +65,7 @@ public class BaseScorewizRepository {
         driver.findElement(By.name("email")).sendKeys(SCOREWIZ_USERNAME);
         driver.findElement(By.name("pass")).sendKeys(SCOREWIZ_PASSWORD);
 
-        submitInputTypeSubmit();
+        submit(TAG_INPUT_TYPE_SUBMIT);
     }
 
     public void logout() {
@@ -85,19 +87,26 @@ public class BaseScorewizRepository {
         ((JavascriptExecutor) driver).executeScript("document.getElementsByTagName(\"header\")[0].remove()");
     }
 
-    protected void submitInputTypeSubmit() {
-        submit(By.xpath("//input[@type='submit']"));
+    protected void submit(SubmitType submitType) {
+        By selector;
+        switch (submitType) {
+            case TAG_INPUT_TYPE_SUBMIT:
+                selector = By.xpath("//input[@type='submit']");
+                break;
+            case ID_NAMES_SUBMIT:
+                selector = By.id("namesSubmit");
+                break;
+            case ID_VOTES_SUBMIT:
+                selector = By.id("votesSubmit");
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid SubmitType");
+
+        }
+        submit(selector);
     }
 
-    protected void submitVotesSubmitId() {
-        submit(By.id("votesSubmit"));
-    }
-
-    protected void submitNamesSubmitId() {
-        submit(By.id("namesSubmit"));
-    }
-
-    protected void submit(By selector) {
+    private void submit(By selector) {
         WebElement namesSubmitBtn = driver.findElement(selector);
         scrollToElement(namesSubmitBtn);
         namesSubmitBtn.click();
@@ -105,5 +114,16 @@ public class BaseScorewizRepository {
 
     protected Object runJavascript(String script, Object... args) {
         return ((JavascriptExecutor) driver).executeScript(script, args);
+    }
+
+    protected Object runJavascript(String script, WebElement element) {
+        return ((JavascriptExecutor) driver).executeScript(script, element);
+    }
+
+    protected void setCountryInFormWithClick(String country, Integer index) {
+        WebElement flagInput = driver.findElement(By.id("flag-select-" + (index)));
+        scrollToElement(flagInput);
+        flagInput.clear();
+        flagInput.sendKeys(country);
     }
 }

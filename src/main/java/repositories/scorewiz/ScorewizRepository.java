@@ -16,6 +16,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static repositories.scorewiz.SubmitType.ID_NAMES_SUBMIT;
+import static repositories.scorewiz.SubmitType.ID_VOTES_SUBMIT;
+import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
+
 @Slf4j
 public class ScorewizRepository extends BaseScorewizRepository {
     public ScorewizRepository() {
@@ -29,7 +33,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
         scrollToElement(titleInput);
         titleInput.sendKeys(name);
 
-        submitInputTypeSubmit();
+        submit(TAG_INPUT_TYPE_SUBMIT);
 
         processScorewizVars();
     }
@@ -70,7 +74,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
                     juryInput.sendKeys(jury.getLocalName());
                 }
         );
-        submitNamesSubmitId();
+        submit(ID_NAMES_SUBMIT);
     }
 
     private WebElement findSelector(List<WebElement> selectors, String participant) {
@@ -116,7 +120,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
                 }
         );
 
-        submitNamesSubmitId();
+        submit(ID_NAMES_SUBMIT);
     }
 
     public void genJuryMapping() {
@@ -160,7 +164,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
             selectPoints.selectByVisibleText(userVotes.getCountryByPoints(i));
         });
 
-        submitVotesSubmitId();
+        submit(ID_VOTES_SUBMIT);
     }
 
     public void setTelevotes(List<Televote> televotes) {
@@ -182,7 +186,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
                 }
         );
 
-        submitNamesSubmitId();
+        submit(ID_NAMES_SUBMIT);
     }
 
     public void findFirstScoreboard() {
