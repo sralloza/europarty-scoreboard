@@ -80,4 +80,8 @@ public class BaseScorewizRepository {
                 webDriver -> ((JavascriptExecutor) webDriver)
                         .executeScript("return document.readyState").equals("complete"));
     }
+
+    protected void removeHeader() {
+        ((JavascriptExecutor) driver).executeScript("document.getElementsByTagName(\"header\")[0].remove()");
+    }
 }

@@ -107,7 +107,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
         String participantsURL = getActionUrl("setOptions") + "/participants";
         driver.get(participantsURL);
         waitPageLoads();
-        ((JavascriptExecutor) driver).executeScript("document.getElementsByTagName(\"header\")[0].remove()");
+        removeHeader();
 
         IntStream.range(0, participants.size()).forEach(i -> {
                     String participant = participants.get(i);
