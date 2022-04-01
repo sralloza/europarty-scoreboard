@@ -30,9 +30,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
         scrollToElement(titleInput);
         titleInput.sendKeys(name);
 
-        WebElement submitBtn = driver.findElement(By.xpath("//input[@type='submit']"));
-        scrollToElement(submitBtn);
-        submitBtn.click();
+        submitInputTypeSubmit();
 
         processScorewizVars();
     }
@@ -73,10 +71,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
                     juryInput.sendKeys(jury.getLocalName());
                 }
         );
-
-        WebElement namesSubmitBtn = driver.findElement(By.id("namesSubmit"));
-        scrollToElement(namesSubmitBtn);
-        namesSubmitBtn.click();
+        submitNamesSubmitId();
     }
 
     private WebElement findSelector(List<WebElement> selectors, String participant) {
@@ -123,9 +118,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
                 }
         );
 
-        WebElement namesSubmitBtn = driver.findElement(By.id("namesSubmit"));
-        scrollToElement(namesSubmitBtn);
-        namesSubmitBtn.click();
+        submitNamesSubmitId();
     }
 
     public void genJuryMapping() {
@@ -169,9 +162,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
             selectPoints.selectByVisibleText(userVotes.getCountryByPoints(i));
         });
 
-        WebElement submitButton = driver.findElement(By.id("votesSubmit"));
-        scrollToElement(submitButton);
-        submitButton.click();
+        submitVotesSubmitId();
     }
 
     public void setTelevotes(List<Televote> televotes) {
@@ -193,9 +184,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
                 }
         );
 
-        WebElement namesSubmitBtn = driver.findElement(By.id("namesSubmit"));
-        scrollToElement(namesSubmitBtn);
-        namesSubmitBtn.click();
+        submitNamesSubmitId();
     }
 
     public void findFirstScoreboard() {

@@ -63,9 +63,7 @@ public class BaseScorewizRepository {
         driver.findElement(By.name("email")).sendKeys(SCOREWIZ_USERNAME);
         driver.findElement(By.name("pass")).sendKeys(SCOREWIZ_PASSWORD);
 
-        WebElement submitButton = driver.findElement(By.xpath("//input[@type='submit']"));
-        scrollToElement(submitButton);
-        submitButton.click();
+        submitInputTypeSubmit();
     }
 
     public void logout() {
@@ -86,5 +84,23 @@ public class BaseScorewizRepository {
 
     protected void removeHeader() {
         ((JavascriptExecutor) driver).executeScript("document.getElementsByTagName(\"header\")[0].remove()");
+    }
+
+    protected void submitInputTypeSubmit() {
+        submit(By.xpath("//input[@type='submit']"));
+    }
+
+    protected void submitVotesSubmitId() {
+        submit(By.id("votesSubmit"));
+    }
+
+    protected void submitNamesSubmitId() {
+        submit(By.id("namesSubmit"));
+    }
+
+    protected void submit(By selector) {
+        WebElement namesSubmitBtn = driver.findElement(selector);
+        scrollToElement(namesSubmitBtn);
+        namesSubmitBtn.click();
     }
 }
