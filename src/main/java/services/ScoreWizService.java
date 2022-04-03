@@ -7,13 +7,12 @@ import models.Televote;
 import models.Vote;
 import repositories.JuryRepository;
 import repositories.ParticipantRepository;
-import repositories.TelevoteRepository;
 import repositories.scorewiz.ScorewizRepository;
+import repositories.televote.TelevoteRepository;
 import repositories.vote.VoteRepository;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 public class ScoreWizService {
     private final JuryRepository juryRepository;
