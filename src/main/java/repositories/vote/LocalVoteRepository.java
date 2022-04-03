@@ -8,13 +8,19 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-public class LocalVoteRepository {
+public class LocalVoteRepository implements VoteRepositoryIface {
 
-    public Map<String, Votes> getJuryVotes() throws IOException {
+    public Map<String, Votes> getJuryVotes() {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(
-                new File("src/main/resources/votes.json"),
-                new TypeReference<>() {
-                });
+        try {
+            return mapper.readValue(
+                    new File("src/main/resources/votes.json"),
+                    new TypeReference<>() {
+                    });
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+            return null;
+        }
     }
 }
