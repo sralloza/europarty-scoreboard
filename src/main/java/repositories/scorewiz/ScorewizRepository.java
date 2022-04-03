@@ -5,7 +5,7 @@ import exceptions.JuryMappingNotFoundException;
 import exceptions.JuryNameNotFoundException;
 import models.Jury;
 import models.Televote;
-import models.Votes;
+import models.Vote;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -125,7 +125,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
         }
     }
 
-    public void registerSingleJuryVotes(Jury jury, Votes userVotes) {
+    public void registerSingleJuryVotes(Jury jury, Vote userVotes) {
         String juryVoteURL = Optional.ofNullable(juryMapping.get(jury.getLocalName()))
                 .orElseThrow(() -> new JuryNameNotFoundException(jury, juryMapping));
 
@@ -151,7 +151,6 @@ public class ScorewizRepository extends BaseScorewizRepository {
         waitPageLoads();
 
         televotes.forEach(televote -> {
-                    System.out.println("Setting televote " + televote);
                     WebElement input = driver.findElements(By.className("select")).stream()
                             .filter(e -> e.getText().equals(televote.getCountry()))
                             .findFirst()

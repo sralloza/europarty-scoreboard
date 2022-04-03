@@ -2,15 +2,15 @@ package repositories.vote;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import models.Votes;
+import models.Vote;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
+import java.util.List;
 
-public class LocalVoteRepository implements VoteRepositoryIface {
+public class LocalVoteRepository implements VoteRepository {
 
-    public Map<String, Votes> getJuryVotes() {
+    public List<Vote> getJuryVotes() {
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.readValue(

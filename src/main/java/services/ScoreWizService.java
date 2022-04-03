@@ -4,12 +4,12 @@ import exceptions.CountryNotFoundException;
 import exceptions.ParticipantsValidationEception;
 import models.Jury;
 import models.Televote;
-import models.Votes;
+import models.Vote;
 import repositories.JuryRepository;
 import repositories.ParticipantRepository;
 import repositories.TelevoteRepository;
-import repositories.vote.LocalVoteRepository;
 import repositories.scorewiz.ScorewizRepository;
+import repositories.vote.VoteRepository;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,14 +19,14 @@ public class ScoreWizService {
     private final JuryRepository juryRepository;
     private final ParticipantRepository participantRepository;
     private final ScorewizRepository scorewizRepository;
-    private final LocalVoteRepository votesRepository;
+    private final VoteRepository votesRepository;
     private final TelevoteRepository televoteRepository;
 
     public ScoreWizService(JuryRepository juryRepository,
                            ParticipantRepository participantRepository,
                            ScorewizRepository scorewizRepository,
                            TelevoteRepository televoteRepository,
-                           LocalVoteRepository votesRepository) {
+                           VoteRepository votesRepository) {
         this.juryRepository = juryRepository;
         this.participantRepository = participantRepository;
         this.scorewizRepository = scorewizRepository;
@@ -39,7 +39,7 @@ public class ScoreWizService {
         List<String> participants = participantRepository.getParticipants();
         validateJuries(participants, juries);
 
-        Map<String, Votes> votes = votesRepository.getJuryVotes();
+        List<Vote> votes = votesRepository.getJuryVotes();
         validateVotes(participants, votes);
 
         List<Televote> televotes = televoteRepository.getTelevotes();
@@ -59,7 +59,7 @@ public class ScoreWizService {
     }
 
     public void setJuryVotes() throws IOException {
-        Map<String, Votes> juryVotes = votesRepository.getJuryVotes();
+        List<Vote> juryVotes = votesRepository.getJuryVotes();
 
         List<String> requestedParticipants = participantRepository.getParticipants();
         validateVotes(requestedParticipants, juryVotes);
@@ -82,18 +82,17 @@ public class ScoreWizService {
         scorewizRepository.logout();
     }
 
-    private void registerAllJuriesVotes(Map<String, Votes> juryVotes) throws IOException {
-
-        for (Map.Entry<String, Votes> entry : juryVotes.entrySet()) {
-            Jury jury = juryRepository.getByName(entry.getKey());
-            scorewizRepository.registerSingleJuryVotes(jury, entry.getValue());
+    private void registerAllJuriesVotes(List<Vote> juryVotes) throws IOException {
+        for (Vote vote : juryVotes) {
+            Jury jury = juryRepository.getByName(vote.getJuryName());
+            scorewizRepository.registerSingleJuryVotes(jury, vote);
         }
     }
 
-    private void validateVotes(List<String> savedParticipants, Map<String, Votes> juryVotes) {
-        juryVotes.forEach((username, userVote) -> userVote.getAllPoints().forEach(s -> {
+    private void validateVotes(List<String> savedParticipants, List<Vote> juryVotes) {
+        juryVotes.forEach(vote -> vote.getAllPoints().forEach(s -> {
             if (!savedParticipants.contains(s)) {
-                throw new CountryNotFoundException(s, username);
+                throw new CountryNotFoundException(s, vote.getJuryName());
             }
         }));
     }

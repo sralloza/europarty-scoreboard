@@ -8,7 +8,9 @@ import java.util.Set;
 
 @Data
 @Accessors(chain = true)
-public class Votes {
+public class Vote {
+    private String juryName;
+
     @JsonProperty("1")
     private String country1Points;
 
