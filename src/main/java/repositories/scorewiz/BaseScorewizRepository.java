@@ -22,17 +22,15 @@ public class BaseScorewizRepository {
     protected static final String SCOREWIZ_USERNAME = Config.get("scorewiz.username");
     protected static final String URL_TEMPLATE = BASE_URL + "/%s/%s/%s";
     private static final String WEBDRIVER_PATH = Config.get("webdriver.chrome.driver");
-    protected final WebDriver driver;
+    protected WebDriver driver;
 
     // TODO: rename juryMapping
     protected Map<String, String> juryMapping;
     protected String scorewizSid;
     protected String scorewizPass;
 
-
-    public BaseScorewizRepository() {
+    private void provisionDriver() {
         System.setProperty("webdriver.chrome.driver", WEBDRIVER_PATH);
-
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
         if (HEADLESS) {
@@ -63,6 +61,7 @@ public class BaseScorewizRepository {
     }
 
     public void login() {
+        provisionDriver();
         driver.get(getLoginURL());
         driver.findElement(By.name("email")).sendKeys(SCOREWIZ_USERNAME);
         driver.findElement(By.name("pass")).sendKeys(SCOREWIZ_PASSWORD);
