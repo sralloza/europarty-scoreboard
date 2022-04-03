@@ -1,19 +1,18 @@
 package repositories;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import repositories.common.LocalCommonRepository;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-public class ParticipantRepository {
+public class ParticipantRepository extends LocalCommonRepository {
 
-    public List<String> getParticipants() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(
-                new File("src/main/resources/participants.json"),
-                new TypeReference<>() {
-                });
+    public ParticipantRepository() {
+        super("src/main/resources/participants.json");
+    }
+
+    public List<String> getParticipants() {
+        return readJson(new TypeReference<>() {
+        });
     }
 }
