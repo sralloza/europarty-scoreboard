@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static constants.EuropartyConstants.VOTE_POINTS_LIST;
+
 public class GSVoteMapper {
     public Vote buildVote(GoogleSheetsVote GSvote) {
         return new Vote()
@@ -30,7 +32,7 @@ public class GSVoteMapper {
         Map<String, Integer> votesMap = new HashMap<>();
         List<Vote> votes = GSvotes.stream().map(this::buildVote).collect(Collectors.toList());
         for (Vote vote : votes) {
-            Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 10, 12).forEach(n -> {
+            VOTE_POINTS_LIST.forEach(n -> {
                 addPoints(votesMap, vote.getCountryByPoints(n), n);
             });
         }

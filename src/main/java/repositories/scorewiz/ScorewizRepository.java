@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static constants.EuropartyConstants.VOTE_POINTS_LIST;
 import static repositories.scorewiz.SubmitType.ID_NAMES_SUBMIT;
 import static repositories.scorewiz.SubmitType.ID_VOTES_SUBMIT;
 import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
@@ -135,7 +136,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
         runJavascript("noDnd()");
         waitPageLoads();
 
-        IntStream.of(1, 2, 3, 4, 5, 6, 7, 8, 10, 12).forEach(i -> {
+        VOTE_POINTS_LIST.forEach(i -> {
             WebElement selectElement = driver.findElement(By.name("p" + i + "[]"));
             scrollToElement(selectElement);
             Select selectPoints = new Select(selectElement);
