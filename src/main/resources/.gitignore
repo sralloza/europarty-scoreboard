@@ -2,3 +2,4 @@ chromedriver
 geckodriver
 config.properties
 *.json
+*.pem
