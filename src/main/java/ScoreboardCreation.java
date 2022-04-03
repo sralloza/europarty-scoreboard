@@ -2,7 +2,7 @@ import config.Config;
 import repositories.JuryRepository;
 import repositories.ParticipantRepository;
 import repositories.TelevoteRepository;
-import repositories.VoteRepository;
+import repositories.vote.LocalVoteRepository;
 import repositories.scorewiz.ScorewizRepository;
 import services.ScoreWizService;
 
@@ -16,7 +16,7 @@ public class ScoreboardCreation {
                 new ParticipantRepository(),
                 new ScorewizRepository(),
                 new TelevoteRepository(),
-                new VoteRepository());
+                new LocalVoteRepository());
 
         String scoreboardName = Config.get("scorewiz.scoreboard.name");
         if (Config.get("debug").equals("true")) {

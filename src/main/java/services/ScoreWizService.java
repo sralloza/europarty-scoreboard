@@ -8,7 +8,7 @@ import models.Votes;
 import repositories.JuryRepository;
 import repositories.ParticipantRepository;
 import repositories.TelevoteRepository;
-import repositories.VoteRepository;
+import repositories.vote.LocalVoteRepository;
 import repositories.scorewiz.ScorewizRepository;
 
 import java.io.IOException;
@@ -19,14 +19,14 @@ public class ScoreWizService {
     private final JuryRepository juryRepository;
     private final ParticipantRepository participantRepository;
     private final ScorewizRepository scorewizRepository;
-    private final VoteRepository votesRepository;
+    private final LocalVoteRepository votesRepository;
     private final TelevoteRepository televoteRepository;
 
     public ScoreWizService(JuryRepository juryRepository,
                            ParticipantRepository participantRepository,
                            ScorewizRepository scorewizRepository,
                            TelevoteRepository televoteRepository,
-                           VoteRepository votesRepository) {
+                           LocalVoteRepository votesRepository) {
         this.juryRepository = juryRepository;
         this.participantRepository = participantRepository;
         this.scorewizRepository = scorewizRepository;

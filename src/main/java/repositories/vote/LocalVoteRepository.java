@@ -1,4 +1,4 @@
-package repositories;
+package repositories.vote;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-public class VoteRepository {
+public class LocalVoteRepository {
 
     public Map<String, Votes> getJuryVotes() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
