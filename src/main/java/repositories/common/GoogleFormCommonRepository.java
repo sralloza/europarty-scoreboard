@@ -27,8 +27,8 @@ public class GoogleFormCommonRepository {
     private static String spreadsheetRange;
 
     public GoogleFormCommonRepository(String spreadsheetId, String spreadsheetRange) {
-        this.spreadsheetId = spreadsheetId;
-        this.spreadsheetRange = spreadsheetRange;
+        GoogleFormCommonRepository.spreadsheetId = spreadsheetId;
+        GoogleFormCommonRepository.spreadsheetRange = spreadsheetRange;
     }
 
     public GoogleFormCommonRepository(String spreadsheetId) {
