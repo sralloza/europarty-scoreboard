@@ -4,6 +4,7 @@ import exceptions.CountryNotFoundException;
 import exceptions.JuryMappingNotFoundException;
 import exceptions.JuryNameNotFoundException;
 import models.Jury;
+import models.Scoreboard;
 import models.Televote;
 import models.Vote;
 import org.openqa.selenium.By;
@@ -41,15 +42,16 @@ public class ScorewizRepository extends BaseScorewizRepository {
     }
 
     public void processScorewizVars() {
-        if (Stream.of(scorewizSid, scorewizPass, juryVoteURLMap).filter(Objects::nonNull).count() == 3) {
+        if (Stream.of(selectedScoreboard, juryVoteURLMap).filter(Objects::nonNull).count() == 2) {
             System.out.println("Vars already set");
             return;
         }
 
         String[] paths = driver.getCurrentUrl().split("/");
 
-        scorewizSid = paths[paths.length - 2];
-        scorewizPass = paths[paths.length - 1];
+        selectedScoreboard = new Scoreboard()
+                .setSid(paths[paths.length - 2])
+                .setPass(paths[paths.length - 1]);
     }
 
     public void setJuries(List<Jury> juries) {
@@ -167,7 +169,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
         submit(ID_NAMES_SUBMIT);
     }
 
-    public void findFirstScoreboard() {
+    public void openFirstScoreboard() {
         WebElement editBtn = driver.findElements(By.tagName("a")).stream()
                 .filter(e -> e.getText().equals("EDIT"))
                 .findFirst()

@@ -69,7 +69,7 @@ public class ScoreWizService {
         validateTelevotes(requestedParticipants, televotes);
 
         scorewizRepository.login();
-        scorewizRepository.findFirstScoreboard();
+        scorewizRepository.openFirstScoreboard();
         scorewizRepository.processScorewizVars();
         scorewizRepository.genJuryMapping();
 

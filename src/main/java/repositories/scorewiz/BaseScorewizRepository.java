@@ -2,6 +2,7 @@ package repositories.scorewiz;
 
 import config.Config;
 import lombok.SneakyThrows;
+import models.Scoreboard;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -29,8 +30,7 @@ public class BaseScorewizRepository {
     private static final File LOCAL_WEBDRIVER_PATH = new File("src/main/resources/" + WEBDRIVER_NAME);
     protected WebDriver driver;
     protected Map<String, String> juryVoteURLMap;
-    protected String scorewizSid;
-    protected String scorewizPass;
+    protected Scoreboard selectedScoreboard;
     private File extractedDriverFile;
 
     @SneakyThrows
@@ -78,7 +78,10 @@ public class BaseScorewizRepository {
     }
 
     protected String getActionUrl(String action) {
-        return String.format(URL_TEMPLATE, action, scorewizSid, scorewizPass);
+        if (selectedScoreboard == null) {
+            throw new IllegalStateException("No scoreboard selected");
+        }
+        return String.format(URL_TEMPLATE, action, selectedScoreboard.getSid(), selectedScoreboard.getPass());
     }
 
     protected String getLoginURL() {
