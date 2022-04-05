@@ -5,10 +5,12 @@ import repositories.common.LocalCommonRepository;
 
 import java.util.List;
 
+import static constants.EuropartyConstants.JsonFiles.PARTICIPANTS;
+
 public class ParticipantRepository extends LocalCommonRepository {
 
     public ParticipantRepository() {
-        super("participants.json");
+        super(PARTICIPANTS);
     }
 
     public List<String> getParticipants() {

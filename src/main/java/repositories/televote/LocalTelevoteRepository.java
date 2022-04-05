@@ -8,10 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static constants.EuropartyConstants.JsonFiles.TELEVOTES;
+
 public class LocalTelevoteRepository extends LocalCommonRepository implements TelevoteRepository {
 
     public LocalTelevoteRepository() {
-        super("televotes.json");
+        super(TELEVOTES);
     }
 
     public List<Televote> getTelevotes() {
