@@ -9,9 +9,7 @@ import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import config.Config;
 import lombok.SneakyThrows;
-import mappers.GSVoteMapper;
 import models.GoogleSheetsVote;
-import models.Televote;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,7 +19,6 @@ import java.util.stream.Collectors;
 public class GoogleFormCommonRepository {
     private static final String APPLICATION_NAME = Config.get("application.name");
     private static final String SERVICE_ACCOUNT_EMAIL = Config.get("google.credentials.email");
-    private static final String SPREADSHEET_ID = Config.get("google.spreadsheets.televote.id");
     private static final String SPREADSHEET_RANGE = "A:L";
 
     private static String spreadsheetId;
