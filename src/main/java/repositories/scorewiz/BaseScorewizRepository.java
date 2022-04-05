@@ -15,6 +15,7 @@ import java.io.File;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
 
@@ -25,17 +26,16 @@ public class BaseScorewizRepository {
     protected static final String SCOREWIZ_USERNAME = Config.get("scorewiz.username");
     protected static final String URL_TEMPLATE = BASE_URL + "/%s/%s/%s";
     private static final String WEBDRIVER_NAME = "chromedriver";
+    private static final File LOCAL_WEBDRIVER_PATH = new File("src/main/resources/" + WEBDRIVER_NAME);
     protected WebDriver driver;
-
-    private File extractedDriverFile;
-    
     protected Map<String, String> juryVoteURLMap;
     protected String scorewizSid;
     protected String scorewizPass;
+    private File extractedDriverFile;
 
     @SneakyThrows
     private void provisionWebdriverFile() {
-        if (new File("src/main/resources/" + WEBDRIVER_NAME).exists()) {
+        if (LOCAL_WEBDRIVER_PATH.exists()) {
             System.out.println("Skipping extraction of webdriver file");
             return;
         }
@@ -49,7 +49,7 @@ public class BaseScorewizRepository {
     }
 
     private void removeWebdriverFile() {
-        if (new File("src/main/resources/" + WEBDRIVER_NAME).exists()) {
+        if (LOCAL_WEBDRIVER_PATH.exists()) {
             System.out.println("Skipping removal of webdriver file");
             return;
         }
@@ -61,11 +61,8 @@ public class BaseScorewizRepository {
 
     private void provisionDriver() {
         provisionWebdriverFile();
-        if (extractedDriverFile != null) {
-            System.setProperty("webdriver.chrome.driver", extractedDriverFile.getPath());
-        } else {
-            System.setProperty("webdriver.chrome.driver", "src/main/resources/" + WEBDRIVER_NAME);
-        }
+        System.setProperty("webdriver.chrome.driver",
+                Objects.requireNonNullElse(extractedDriverFile, LOCAL_WEBDRIVER_PATH).getPath());
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
