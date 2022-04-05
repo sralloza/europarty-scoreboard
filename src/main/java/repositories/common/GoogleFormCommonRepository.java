@@ -8,6 +8,8 @@ import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import config.Config;
+import exceptions.FileDeleteException;
+import exceptions.NoValidVotesFoundException;
 import lombok.SneakyThrows;
 import models.GoogleSheetsVote;
 import org.apache.commons.io.FileUtils;
@@ -50,7 +52,7 @@ public class GoogleFormCommonRepository {
                 .setServiceAccountPrivateKeyFromPemFile(keyFile)
                 .build();
         if (!keyFile.delete()) {
-            throw new RuntimeException("Could not delete key file " + keyFile);
+            throw new FileDeleteException(keyFile);
         }
         System.out.println("Key deleted");
         return creds;
@@ -81,7 +83,7 @@ public class GoogleFormCommonRepository {
                 .collect(Collectors.toList());
 
         if (strValues.size() < 2) {
-            throw new RuntimeException("No valid votes found (found only" + strValues.size() + "rows)");
+            throw new NoValidVotesFoundException("No valid votes found (found only" + strValues.size() + "rows)");
         }
 
         return strValues.stream()

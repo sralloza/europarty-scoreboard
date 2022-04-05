@@ -1,5 +1,7 @@
 package config;
 
+import exceptions.JarResourceNotFoundException;
+import exceptions.NormalResourceNotFoundException;
 import lombok.SneakyThrows;
 
 import java.io.File;
@@ -31,12 +33,12 @@ public class Config {
         if (jarFile.isFile()) {
             final String finalPath = "/" + path;
             return Optional.ofNullable(Config.class.getResourceAsStream("/" + path))
-                    .orElseThrow(() -> new RuntimeException("Resource not found inside jar: " + finalPath));
+                    .orElseThrow(() -> new JarResourceNotFoundException(finalPath));
         } else {
             final String finalPath = "src/main/resources/" + path;
             InputStream stream = new FileInputStream(finalPath);
             return Optional.of(stream)
-                    .orElseThrow(() -> new RuntimeException("Resource not found outside jar: " + finalPath));
+                    .orElseThrow(() -> new NormalResourceNotFoundException(finalPath));
         }
     }
 

@@ -2,6 +2,8 @@ package repositories.scorewiz;
 
 import com.google.inject.Inject;
 import config.Config;
+import exceptions.MainMenuButtonNotFoundException;
+import exceptions.SelectorNotFoundException;
 import lombok.SneakyThrows;
 import models.Scoreboard;
 import org.apache.commons.io.FileUtils;
@@ -200,7 +202,7 @@ public class BaseScorewizRepository {
         return selectors.stream()
                 .filter(s -> s.getText().equalsIgnoreCase(participant))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("No participant found for " + participant));
+                .orElseThrow(() -> new SelectorNotFoundException(participant));
     }
 
     protected List<WebElement> findMainMenuButtons(MainMenuButtonType buttonType) {
@@ -215,7 +217,7 @@ public class BaseScorewizRepository {
                 .map(node -> node.findElements(By.tagName("a")).stream()
                         .filter(e -> e.getText().equals(buttonType.getContent()))
                         .findFirst()
-                        .orElseThrow(() -> new RuntimeException("No button found")))
+                        .orElseThrow(() -> new MainMenuButtonNotFoundException(buttonType, webElement)))
                 .collect(Collectors.toList());
     }
 }
