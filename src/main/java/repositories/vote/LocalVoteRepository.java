@@ -9,7 +9,7 @@ import java.util.List;
 public class LocalVoteRepository extends LocalCommonRepository implements VoteRepository {
 
     public LocalVoteRepository() {
-        super("src/main/resources/votes.json");
+        super("votes.json");
     }
 
     public List<Vote> getJuryVotes() {

@@ -1,6 +1,8 @@
 package repositories.scorewiz;
 
 import config.Config;
+import lombok.SneakyThrows;
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -9,9 +11,11 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
 
@@ -21,16 +25,50 @@ public class BaseScorewizRepository {
     protected static final String SCOREWIZ_PASSWORD = Config.get("scorewiz.password");
     protected static final String SCOREWIZ_USERNAME = Config.get("scorewiz.username");
     protected static final String URL_TEMPLATE = BASE_URL + "/%s/%s/%s";
-    private static final String WEBDRIVER_PATH = Config.get("webdriver.chrome.driver");
+    private static final String WEBDRIVER_NAME = "chromedriver";
     protected WebDriver driver;
 
+    private File extractedDriverFile;
+    
     // TODO: rename juryMapping
     protected Map<String, String> juryMapping;
     protected String scorewizSid;
     protected String scorewizPass;
 
+    @SneakyThrows
+    private void provisionWebdriverFile() {
+        if (new File("src/main/resources/" + WEBDRIVER_NAME).exists()) {
+            System.out.println("Skipping extraction of webdriver file");
+            return;
+        }
+
+        extractedDriverFile = File.createTempFile("chromedriver", "").getAbsoluteFile();
+        System.out.println("Extracted webdriver file: " + extractedDriverFile);
+        if (!extractedDriverFile.setExecutable(true)) {
+            System.err.println("Failed to set executable flag on chromedriver: " + extractedDriverFile);
+        }
+        FileUtils.copyInputStreamToFile(Config.getResource(WEBDRIVER_NAME), extractedDriverFile);
+    }
+
+    private void removeWebdriverFile() {
+        if (new File("src/main/resources/" + WEBDRIVER_NAME).exists()) {
+            System.out.println("Skipping removal of webdriver file");
+            return;
+        }
+        if (!extractedDriverFile.delete()) {
+            System.out.println("Failed to delete webdriver file: " + extractedDriverFile);
+        }
+
+    }
+
     private void provisionDriver() {
-        System.setProperty("webdriver.chrome.driver", WEBDRIVER_PATH);
+        provisionWebdriverFile();
+        if (extractedDriverFile != null) {
+            System.setProperty("webdriver.chrome.driver", extractedDriverFile.getPath());
+        } else {
+            System.setProperty("webdriver.chrome.driver", "src/main/resources/" + WEBDRIVER_NAME);
+        }
+
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
         if (HEADLESS) {
@@ -72,6 +110,7 @@ public class BaseScorewizRepository {
     public void logout() {
         driver.get(getLogoutURL());
         driver.close();
+        removeWebdriverFile();
     }
 
     protected void scrollToElement(WebElement element) {

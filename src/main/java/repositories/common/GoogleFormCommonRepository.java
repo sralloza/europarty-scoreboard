@@ -10,8 +10,10 @@ import com.google.api.services.sheets.v4.model.ValueRange;
 import config.Config;
 import lombok.SneakyThrows;
 import models.GoogleSheetsVote;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,14 +36,24 @@ public class GoogleFormCommonRepository {
     }
 
     private static Credential authorize() throws Exception {
-        return new GoogleCredential.Builder()
+        InputStream keyStream = Config.getResource("key.pem");
+
+        File keyFile = File.createTempFile("key", ".p12").getAbsoluteFile();
+        FileUtils.copyInputStreamToFile(keyStream, keyFile);
+        System.out.println("Key file created: " + keyFile);
+
+        var creds = new GoogleCredential.Builder()
                 .setTransport(GoogleNetHttpTransport.newTrustedTransport())
                 .setJsonFactory(JacksonFactory.getDefaultInstance())
                 .setServiceAccountId(SERVICE_ACCOUNT_EMAIL)
                 .setServiceAccountScopes(List.of(SheetsScopes.SPREADSHEETS))
-                .setServiceAccountPrivateKeyFromPemFile(new File("src/main/resources/key.pem"))
+                .setServiceAccountPrivateKeyFromPemFile(keyFile)
                 .build();
-
+        if (!keyFile.delete()) {
+            throw new RuntimeException("Could not delete key file " + keyFile);
+        }
+        System.out.println("Key deleted");
+        return creds;
     }
 
     private static Sheets getSheetsService() throws Exception {

@@ -27,6 +27,7 @@ dependencies {
     implementation "com.google.guava:guava:31.1-jre"
 
     implementation "org.projectlombok:lombok:1.18.22"
+    implementation 'commons-io:commons-io:2.11.0'
 
     implementation "com.fasterxml.jackson.core:jackson-databind:2.13.2.2"
     implementation 'com.google.http-client:google-http-client-jackson2:1.41.5'

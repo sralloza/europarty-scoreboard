@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class LocalTelevoteRepository extends LocalCommonRepository implements TelevoteRepository {
 
     public LocalTelevoteRepository() {
-        super("src/main/resources/televotes.json");
+        super("televotes.json");
     }
 
     public List<Televote> getTelevotes() {

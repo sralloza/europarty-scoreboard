@@ -11,7 +11,7 @@ public class JuryRepository extends LocalCommonRepository {
     private List<Jury> juryList;
 
     public JuryRepository() {
-        super("src/main/resources/juries.json");
+        super("juries.json");
     }
 
     public List<Jury> getJuries() {
