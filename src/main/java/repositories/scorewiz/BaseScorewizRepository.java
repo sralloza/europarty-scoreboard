@@ -1,5 +1,6 @@
 package repositories.scorewiz;
 
+import com.google.inject.Inject;
 import config.Config;
 import lombok.SneakyThrows;
 import models.Scoreboard;
@@ -11,6 +12,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import utils.ScorewizUtils;
 
 import java.io.File;
 import java.time.Duration;
@@ -25,13 +27,20 @@ public class BaseScorewizRepository {
     protected static final Boolean HEADLESS = !Config.get("debug").equals("true");
     protected static final String SCOREWIZ_PASSWORD = Config.get("scorewiz.password");
     protected static final String SCOREWIZ_USERNAME = Config.get("scorewiz.username");
-    protected static final String URL_TEMPLATE = BASE_URL + "/%s/%s/%s";
+    protected static final String URL_ACTION_TEMPLATE = BASE_URL + "/%s/%s/%s";
+    protected static final String SCOREBOARD_URL_TEMPLATE = BASE_URL + "/%s/%s";
     private static final String WEBDRIVER_NAME = "chromedriver";
     private static final File LOCAL_WEBDRIVER_PATH = new File("src/main/resources/" + WEBDRIVER_NAME);
     protected WebDriver driver;
     protected Map<String, String> juryVoteURLMap;
     protected Scoreboard selectedScoreboard;
     private File extractedDriverFile;
+    protected final ScorewizUtils scorewizUtils;
+
+    @Inject
+    public BaseScorewizRepository(ScorewizUtils scorewizUtils) {
+        this.scorewizUtils = scorewizUtils;
+    }
 
     @SneakyThrows
     private void provisionWebdriverFile() {
@@ -81,7 +90,14 @@ public class BaseScorewizRepository {
         if (selectedScoreboard == null) {
             throw new IllegalStateException("No scoreboard selected");
         }
-        return String.format(URL_TEMPLATE, action, selectedScoreboard.getSid(), selectedScoreboard.getPass());
+        return String.format(URL_ACTION_TEMPLATE, action, selectedScoreboard.getSid(), selectedScoreboard.getPass());
+    }
+
+    protected String getScoreboardUrl(){
+        if (selectedScoreboard == null) {
+            throw new IllegalStateException("No scoreboard selected");
+        }
+        return String.format(SCOREBOARD_URL_TEMPLATE, selectedScoreboard.getSid(), selectedScoreboard.getPass());
     }
 
     protected String getLoginURL() {

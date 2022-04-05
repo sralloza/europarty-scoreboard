@@ -26,16 +26,13 @@ public class Config {
 
     @SneakyThrows
     public static InputStream getResource(String path) {
-        System.out.println("Looking for resource: " + path);
         final File jarFile = new File(Config.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 
         if (jarFile.isFile()) {
-            System.out.println("Launching inside jar");
             final String finalPath = "/" + path;
             return Optional.ofNullable(Config.class.getResourceAsStream("/" + path))
                     .orElseThrow(() -> new RuntimeException("Resource not found inside jar: " + finalPath));
         } else {
-            System.out.println("Launching outside jar");
             final String finalPath = "src/main/resources/" + path;
             InputStream stream = new FileInputStream(finalPath);
             return Optional.of(stream)

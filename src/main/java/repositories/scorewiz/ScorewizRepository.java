@@ -1,8 +1,10 @@
 package repositories.scorewiz;
 
+import com.google.inject.Inject;
 import exceptions.CountryNotFoundException;
 import exceptions.JuryMappingNotFoundException;
 import exceptions.JuryNameNotFoundException;
+import exceptions.NoScoreboardFoundException;
 import models.Jury;
 import models.Scoreboard;
 import models.Televote;
@@ -10,6 +12,7 @@ import models.Vote;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
+import utils.ScorewizUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,8 +28,9 @@ import static repositories.scorewiz.SubmitType.ID_VOTES_SUBMIT;
 import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
 
 public class ScorewizRepository extends BaseScorewizRepository {
-    public ScorewizRepository() {
-        super();
+    @Inject
+    public ScorewizRepository(ScorewizUtils scorewizUtils) {
+        super(scorewizUtils);
     }
 
     public void createScoreboard(String name) {
@@ -47,11 +51,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
             return;
         }
 
-        String[] paths = driver.getCurrentUrl().split("/");
-
-        selectedScoreboard = new Scoreboard()
-                .setSid(paths[paths.length - 2])
-                .setPass(paths[paths.length - 1]);
+        selectedScoreboard = scorewizUtils.getScoreboardFromURL(driver.getCurrentUrl());
     }
 
     public void setJuries(List<Jury> juries) {
@@ -170,11 +170,19 @@ public class ScorewizRepository extends BaseScorewizRepository {
     }
 
     public void openFirstScoreboard() {
-        WebElement editBtn = driver.findElements(By.tagName("a")).stream()
-                .filter(e -> e.getText().equals("EDIT"))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("No edit button found"));
-        scrollToElement(editBtn);
-        editBtn.click();
+        selectedScoreboard = getScoreboards().stream().findFirst().orElseThrow(NoScoreboardFoundException::new);
+        driver.get(getScoreboardUrl());
+    }
+
+    public List<Scoreboard> getScoreboards() {
+        return driver.findElements(By.className("node")).stream()
+                .skip(1)
+                .map(node -> node.findElements(By.tagName("a")).stream()
+                        .filter(e -> e.getText().equals("EDIT"))
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("No edit button found")))
+                .map(e -> e.getAttribute("href"))
+                .map(scorewizUtils::getScoreboardFromURL)
+                .collect(Collectors.toList());
     }
 }
