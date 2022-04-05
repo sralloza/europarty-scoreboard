@@ -138,7 +138,11 @@ public class BaseScorewizRepository {
     }
 
     protected void removeHeader() {
-        ((JavascriptExecutor) driver).executeScript("document.getElementsByTagName(\"header\")[0].remove()");
+        try {
+            ((JavascriptExecutor) driver).executeScript("document.getElementsByTagName(\"header\")[0].remove()");
+        } catch (JavascriptException e) {
+            // ignore
+        }
     }
 
     protected void submit(SubmitType submitType) {
