@@ -1,5 +1,6 @@
 package repositories.televote;
 
+import com.google.inject.Inject;
 import config.Config;
 import mappers.GSVoteMapper;
 import models.GoogleSheetsVote;
@@ -13,9 +14,10 @@ public class GoogleFormTelevoteRepository extends GoogleFormCommonRepository imp
 
     private final GSVoteMapper mapper;
 
-    public GoogleFormTelevoteRepository() {
+    @Inject
+    public GoogleFormTelevoteRepository(GSVoteMapper mapper) {
         super(SPREADSHEET_ID);
-        mapper = new GSVoteMapper();
+        this.mapper = mapper;
     }
 
     @Override

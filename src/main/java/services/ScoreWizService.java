@@ -1,5 +1,6 @@
 package services;
 
+import com.google.inject.Inject;
 import exceptions.CountryNotFoundException;
 import exceptions.ParticipantsValidationEception;
 import models.Jury;
@@ -21,6 +22,7 @@ public class ScoreWizService {
     private final VoteRepository votesRepository;
     private final TelevoteRepository televoteRepository;
 
+    @Inject
     public ScoreWizService(JuryRepository juryRepository,
                            ParticipantRepository participantRepository,
                            ScorewizRepository scorewizRepository,

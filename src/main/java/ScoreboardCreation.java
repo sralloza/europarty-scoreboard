@@ -1,9 +1,6 @@
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import config.Config;
-import repositories.JuryRepository;
-import repositories.ParticipantRepository;
-import repositories.televote.LocalTelevoteRepository;
-import repositories.vote.LocalVoteRepository;
-import repositories.scorewiz.ScorewizRepository;
 import services.ScoreWizService;
 
 import java.io.IOException;
@@ -11,12 +8,8 @@ import java.time.LocalDateTime;
 
 public class ScoreboardCreation {
     public static void main(String[] args) throws IOException {
-        ScoreWizService scoreWizService = new ScoreWizService(
-                new JuryRepository(),
-                new ParticipantRepository(),
-                new ScorewizRepository(),
-                new LocalTelevoteRepository(),
-                new LocalVoteRepository());
+        Injector injector = Guice.createInjector(new LocalModule());
+        ScoreWizService scoreWizService = injector.getInstance(ScoreWizService.class);
 
         String scoreboardName = Config.get("scorewiz.scoreboard.name");
         if (Config.get("debug").equals("true")) {

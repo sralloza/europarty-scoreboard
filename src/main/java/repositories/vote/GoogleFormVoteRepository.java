@@ -1,5 +1,6 @@
 package repositories.vote;
 
+import com.google.inject.Inject;
 import config.Config;
 import mappers.GSVoteMapper;
 import models.GoogleSheetsVote;
@@ -14,9 +15,10 @@ public class GoogleFormVoteRepository extends GoogleFormCommonRepository impleme
 
     private final GSVoteMapper mapper;
 
-    public GoogleFormVoteRepository() {
+    @Inject
+    public GoogleFormVoteRepository(GSVoteMapper mapper) {
         super(SPREADSHEET_ID);
-        mapper = new GSVoteMapper();
+        this.mapper = mapper;
     }
 
     @Override
