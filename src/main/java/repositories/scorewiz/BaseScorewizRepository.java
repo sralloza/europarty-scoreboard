@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import models.Scoreboard;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -19,16 +20,17 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
 
 public class BaseScorewizRepository {
     protected static final String BASE_URL = Config.get("scorewiz.baseUrl");
+    protected static final String MENU_URL = BASE_URL + "/my/scoreboards";
     protected static final Boolean HEADLESS = !Config.get("debug").equals("true");
     protected static final String SCOREWIZ_PASSWORD = Config.get("scorewiz.password");
     protected static final String SCOREWIZ_USERNAME = Config.get("scorewiz.username");
     protected static final String URL_ACTION_TEMPLATE = BASE_URL + "/%s/%s/%s";
-    protected static final String SCOREBOARD_URL_TEMPLATE = BASE_URL + "/%s/%s";
     private static final String WEBDRIVER_NAME = "chromedriver";
     private static final File LOCAL_WEBDRIVER_PATH = new File("src/main/resources/" + WEBDRIVER_NAME);
     protected WebDriver driver;
@@ -90,14 +92,22 @@ public class BaseScorewizRepository {
         if (selectedScoreboard == null) {
             throw new IllegalStateException("No scoreboard selected");
         }
-        return String.format(URL_ACTION_TEMPLATE, action, selectedScoreboard.getSid(), selectedScoreboard.getPass());
+        return getActionUrl(action, selectedScoreboard);
     }
 
-    protected String getScoreboardUrl(){
+    private String getActionUrl(String action, Scoreboard scoreboard) {
+        return String.format(URL_ACTION_TEMPLATE, action, scoreboard.getSid(), scoreboard.getPass());
+    }
+
+    protected String getScoreboardUrl() {
         if (selectedScoreboard == null) {
             throw new IllegalStateException("No scoreboard selected");
         }
-        return String.format(SCOREBOARD_URL_TEMPLATE, selectedScoreboard.getSid(), selectedScoreboard.getPass());
+        return getScoreboardUrl(selectedScoreboard);
+    }
+
+    protected String getScoreboardUrl(Scoreboard scoreboard) {
+        return getActionUrl("menu", scoreboard);
     }
 
     protected String getLoginURL() {
@@ -191,5 +201,21 @@ public class BaseScorewizRepository {
                 .filter(s -> s.getText().equalsIgnoreCase(participant))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("No participant found for " + participant));
+    }
+
+    protected List<WebElement> findMainMenuButtons(MainMenuButtonType buttonType) {
+        if (!driver.getCurrentUrl().equals(MENU_URL)) {
+            driver.get(MENU_URL);
+        }
+        return findMainMenuButtons(buttonType, driver.findElement(By.className("node")));
+    }
+
+    protected List<WebElement> findMainMenuButtons(MainMenuButtonType buttonType, WebElement webElement) {
+        return webElement.findElements(By.className("node")).stream()
+                .map(node -> node.findElements(By.tagName("a")).stream()
+                        .filter(e -> e.getText().equals(buttonType.getContent()))
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("No button found")))
+                .collect(Collectors.toList());
     }
 }

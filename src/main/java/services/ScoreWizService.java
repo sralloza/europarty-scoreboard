@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import exceptions.CountryNotFoundException;
 import exceptions.ParticipantsValidationEception;
 import models.Jury;
+import models.Scoreboard;
 import models.Televote;
 import models.Vote;
 import repositories.JuryRepository;
@@ -112,5 +113,12 @@ public class ScoreWizService {
                 throw new CountryNotFoundException(jury);
             }
         });
+    }
+
+    public void deleteAllScoreboards() {
+        scorewizRepository.login();
+        List<Scoreboard> scoreboards = scorewizRepository.getScoreboards();
+        scorewizRepository.deleteScoreboards(scoreboards);
+        scorewizRepository.logout();
     }
 }

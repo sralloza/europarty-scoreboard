@@ -9,11 +9,15 @@ import models.Jury;
 import models.Scoreboard;
 import models.Televote;
 import models.Vote;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.ScorewizUtils;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +27,8 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static constants.EuropartyConstants.VOTE_POINTS_LIST;
+import static repositories.scorewiz.MainMenuButtonType.DELETE;
+import static repositories.scorewiz.MainMenuButtonType.EDIT;
 import static repositories.scorewiz.SubmitType.ID_NAMES_SUBMIT;
 import static repositories.scorewiz.SubmitType.ID_VOTES_SUBMIT;
 import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
@@ -175,14 +181,37 @@ public class ScorewizRepository extends BaseScorewizRepository {
     }
 
     public List<Scoreboard> getScoreboards() {
-        return driver.findElements(By.className("node")).stream()
-                .skip(1)
-                .map(node -> node.findElements(By.tagName("a")).stream()
-                        .filter(e -> e.getText().equals("EDIT"))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("No edit button found")))
+        return findMainMenuButtons(EDIT).stream()
                 .map(e -> e.getAttribute("href"))
                 .map(scorewizUtils::getScoreboardFromURL)
                 .collect(Collectors.toList());
+    }
+
+    public void deleteScoreboards(List<Scoreboard> scoreboardList) {
+        scoreboardList.forEach(this::deleteScoreboard);
+    }
+
+    public void deleteScoreboard(Scoreboard scoreboard) {
+        if (!driver.getCurrentUrl().equals(MENU_URL)) {
+            driver.get(MENU_URL);
+        }
+        removeHeader();
+        String scoreboardURL = getScoreboardUrl(scoreboard);
+
+        WebElement deleteBtn = findMainMenuButtons(EDIT).stream()
+                .filter(e -> e.getAttribute("href").equals(scoreboardURL))
+                .map(e -> e.findElement(By.xpath("./..")))
+                .map(e -> findMainMenuButtons(DELETE).stream().findFirst().orElseThrow(RuntimeException::new))
+                .findFirst().orElseThrow(() -> new ScoreboardNotFoundException(scoreboard));
+
+        System.out.println(deleteBtn.getAttribute("href"));
+        scrollToElement(deleteBtn);
+        deleteBtn.click();
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3000));
+        wait.until(ExpectedConditions.alertIsPresent());
+        Alert alert = driver.switchTo().alert();
+        alert.accept();
+
     }
 }
