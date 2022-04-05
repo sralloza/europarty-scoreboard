@@ -41,7 +41,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
     }
 
     public void processScorewizVars() {
-        if (Stream.of(scorewizSid, scorewizPass, juryMapping).filter(Objects::nonNull).count() == 3) {
+        if (Stream.of(scorewizSid, scorewizPass, juryVoteURLMap).filter(Objects::nonNull).count() == 3) {
             System.out.println("Vars already set");
             return;
         }
@@ -104,7 +104,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
     }
 
     public void genJuryMapping() {
-        juryMapping = new HashMap<>();
+        juryVoteURLMap = new HashMap<>();
 
         driver.get(getActionUrl("votesOverview"));
         waitPageLoads();
@@ -118,17 +118,17 @@ public class ScorewizRepository extends BaseScorewizRepository {
 
             String juryName = filteredCols.get(0).getText();
             String juryVoteURL = filteredCols.get(1).findElement(By.cssSelector("a")).getAttribute("href");
-            juryMapping.put(juryName, juryVoteURL);
+            juryVoteURLMap.put(juryName, juryVoteURL);
         }
 
-        if (juryMapping.isEmpty()) {
+        if (juryVoteURLMap.isEmpty()) {
             throw new JuryMappingNotFoundException();
         }
     }
 
     public void registerSingleJuryVotes(Jury jury, Vote userVotes) {
-        String juryVoteURL = Optional.ofNullable(juryMapping.get(jury.getLocalName()))
-                .orElseThrow(() -> new JuryNameNotFoundException(jury, juryMapping));
+        String juryVoteURL = Optional.ofNullable(juryVoteURLMap.get(jury.getLocalName()))
+                .orElseThrow(() -> new JuryNameNotFoundException(jury, juryVoteURLMap));
 
         driver.get(juryVoteURL);
         waitPageLoads();

@@ -15,7 +15,6 @@ import java.io.File;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
 
@@ -30,8 +29,7 @@ public class BaseScorewizRepository {
 
     private File extractedDriverFile;
     
-    // TODO: rename juryMapping
-    protected Map<String, String> juryMapping;
+    protected Map<String, String> juryVoteURLMap;
     protected String scorewizSid;
     protected String scorewizPass;
 
