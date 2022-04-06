@@ -190,7 +190,6 @@ public class ScorewizRepository extends BaseScorewizRepository {
     public void deleteScoreboards() {
         while (true) {
             Optional<WebElement> deleteBtnOpt = findMainMenuButtons(DELETE).stream().findFirst();
-            System.out.println("deleteBtnOpt: " + deleteBtnOpt);
             if (deleteBtnOpt.isEmpty()) {
                 break;
             }
