@@ -194,6 +194,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
             if (deleteBtnOpt.isEmpty()) {
                 break;
             }
+            removeHeader();
             var deleteBtn = deleteBtnOpt.get();
             scrollToElement(deleteBtn);
             deleteBtn.click();

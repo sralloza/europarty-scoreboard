@@ -2,7 +2,6 @@ package repositories.scorewiz;
 
 import com.google.inject.Inject;
 import config.Config;
-import exceptions.MainMenuButtonNotFoundException;
 import exceptions.SelectorNotFoundException;
 import lombok.SneakyThrows;
 import models.Scoreboard;
@@ -206,9 +205,8 @@ public class BaseScorewizRepository {
     }
 
     protected List<WebElement> findMainMenuButtons(MainMenuButtonType buttonType) {
-        if (!driver.getCurrentUrl().equals(MENU_URL)) {
-            driver.get(MENU_URL);
-        }
+        driver.get(MENU_URL);
+        waitPageLoads();
         return findMainMenuButtons(buttonType, driver.findElement(By.className("node")));
     }
 
