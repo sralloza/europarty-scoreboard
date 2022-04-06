@@ -12,23 +12,27 @@ import repositories.ParticipantRepository;
 import repositories.scorewiz.ScorewizRepository;
 import repositories.televote.TelevoteRepository;
 import repositories.vote.VoteRepository;
+import validators.GlobalValidator;
 
 import java.io.IOException;
 import java.util.List;
 
 public class ScoreWizService {
+    private final GlobalValidator validator;
     private final JuryRepository juryRepository;
     private final ParticipantRepository participantRepository;
     private final ScorewizRepository scorewizRepository;
-    private final VoteRepository votesRepository;
     private final TelevoteRepository televoteRepository;
+    private final VoteRepository votesRepository;
 
     @Inject
-    public ScoreWizService(JuryRepository juryRepository,
+    public ScoreWizService(GlobalValidator validator,
+                           JuryRepository juryRepository,
                            ParticipantRepository participantRepository,
                            ScorewizRepository scorewizRepository,
                            TelevoteRepository televoteRepository,
                            VoteRepository votesRepository) {
+        this.validator = validator;
         this.juryRepository = juryRepository;
         this.participantRepository = participantRepository;
         this.scorewizRepository = scorewizRepository;
@@ -39,7 +43,7 @@ public class ScoreWizService {
     public void createScoreboard(String name) throws IOException {
         List<Jury> juries = juryRepository.getJuries();
         List<String> participants = participantRepository.getParticipants();
-        validateJuries(participants, juries);
+        validator.validateJuries(participants, juries);
 
         List<Vote> votes = votesRepository.getJuryVotes();
         validateVotes(participants, votes);
@@ -107,13 +111,6 @@ public class ScoreWizService {
         });
     }
 
-    private void validateJuries(List<String> savedParticipants, List<Jury> juries) {
-        juries.forEach(jury -> {
-            if (!savedParticipants.contains(jury.getCountry())) {
-                throw new CountryNotFoundException(jury);
-            }
-        });
-    }
 
     public void deleteAllScoreboards() {
         scorewizRepository.login();
