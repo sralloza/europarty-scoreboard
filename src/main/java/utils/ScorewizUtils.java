@@ -6,7 +6,7 @@ public class ScorewizUtils {
     public Scoreboard getScoreboardFromURL(String url) {
         String[] paths = url.split("/");
         return new Scoreboard()
-                .setSid(paths[paths.length - 2])
+                .setSid(Integer.parseInt(paths[paths.length - 2]))
                 .setPass(paths[paths.length - 1]);
     }
 }

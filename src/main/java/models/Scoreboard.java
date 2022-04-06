@@ -6,6 +6,6 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class Scoreboard {
-    private String sid;
+    private Integer sid;
     private String pass;
 }
