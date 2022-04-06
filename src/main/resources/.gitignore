@@ -1,5 +1,5 @@
 chromedriver
 geckodriver
-config.properties
+*.properties
 *.json
 *.pem
