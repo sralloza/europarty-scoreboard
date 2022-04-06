@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 public class DeleteAllScoreboards {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         Injector injector = Guice.createInjector(new LocalModule());
         ScoreWizService scoreWizService = injector.getInstance(ScoreWizService.class);
 
