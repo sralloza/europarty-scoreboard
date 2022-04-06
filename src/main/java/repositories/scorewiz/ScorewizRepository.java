@@ -187,31 +187,24 @@ public class ScorewizRepository extends BaseScorewizRepository {
                 .collect(Collectors.toList());
     }
 
-    public void deleteScoreboards(List<Scoreboard> scoreboardList) {
-        scoreboardList.forEach(this::deleteScoreboard);
-    }
+    public void deleteScoreboards() {
+        while (true) {
+            Optional<WebElement> deleteBtnOpt = findMainMenuButtons(DELETE).stream().findFirst();
+            System.out.println("deleteBtnOpt: " + deleteBtnOpt);
+            if (deleteBtnOpt.isEmpty()) {
+                break;
+            }
+            var deleteBtn = deleteBtnOpt.get();
+            scrollToElement(deleteBtn);
+            deleteBtn.click();
 
-    public void deleteScoreboard(Scoreboard scoreboard) {
-        if (!driver.getCurrentUrl().equals(MENU_URL)) {
-            driver.get(MENU_URL);
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3000));
+            wait.until(ExpectedConditions.alertIsPresent());
+            Alert alert = driver.switchTo().alert();
+            alert.accept();
+            driver.switchTo().defaultContent();
+
+            waitPageLoads();
         }
-        removeHeader();
-        String scoreboardURL = getScoreboardUrl(scoreboard);
-
-        WebElement deleteBtn = findMainMenuButtons(EDIT).stream()
-                .filter(e -> e.getAttribute("href").equals(scoreboardURL))
-                .map(e -> e.findElement(By.xpath("./..")))
-                .map(e -> findMainMenuButtons(DELETE).stream().findFirst().orElseThrow(RuntimeException::new))
-                .findFirst().orElseThrow(() -> new ScoreboardNotFoundException(scoreboard));
-
-        System.out.println(deleteBtn.getAttribute("href"));
-        scrollToElement(deleteBtn);
-        deleteBtn.click();
-
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3000));
-        wait.until(ExpectedConditions.alertIsPresent());
-        Alert alert = driver.switchTo().alert();
-        alert.accept();
-
     }
 }

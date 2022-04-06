@@ -217,7 +217,8 @@ public class BaseScorewizRepository {
                 .map(node -> node.findElements(By.tagName("a")).stream()
                         .filter(e -> e.getText().equals(buttonType.getContent()))
                         .findFirst()
-                        .orElseThrow(() -> new MainMenuButtonNotFoundException(buttonType, webElement)))
+                        .orElse(null))
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 }

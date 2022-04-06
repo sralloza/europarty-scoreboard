@@ -118,7 +118,16 @@ public class ScoreWizService {
     public void deleteAllScoreboards() {
         scorewizRepository.login();
         List<Scoreboard> scoreboards = scorewizRepository.getScoreboards();
-        scorewizRepository.deleteScoreboards(scoreboards);
+        if (!scoreboards.isEmpty()) {
+            scorewizRepository.deleteScoreboards();
+        }
         scorewizRepository.logout();
+    }
+
+    public List<Scoreboard> getScoreboards() {
+        scorewizRepository.login();
+        List<Scoreboard> scoreboards = scorewizRepository.getScoreboards();
+        scorewizRepository.logout();
+        return scoreboards;
     }
 }
