@@ -23,21 +23,23 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static constants.EuropartyConstants.HEADLESS;
+import static constants.ScorewizConstants.SCOREWIZ_PASSWORD;
+import static constants.ScorewizConstants.SCOREWIZ_USERNAME;
+import static constants.ScorewizConstants.SW_ACTION_URL_TEMPLATE;
+import static constants.ScorewizConstants.SW_BASE_URL;
+import static constants.ScorewizConstants.SW_MENU_URL;
 import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
 
 public class BaseScorewizRepository {
-    protected static final String BASE_URL = Config.get("scorewiz.baseUrl");
-    protected static final String MENU_URL = BASE_URL + "/my/scoreboards";
-    protected static final Boolean HEADLESS = !Config.get("debug").equals("true");
-    protected static final String SCOREWIZ_PASSWORD = Config.get("scorewiz.password");
-    protected static final String SCOREWIZ_USERNAME = Config.get("scorewiz.username");
-    protected static final String URL_ACTION_TEMPLATE = BASE_URL + "/%s/%s/%s";
     private static final String WEBDRIVER_NAME = "chromedriver";
     private static final File LOCAL_WEBDRIVER_PATH = new File("src/main/resources/" + WEBDRIVER_NAME);
+
     protected WebDriver driver;
     protected Map<String, String> juryVoteURLMap;
     protected Scoreboard selectedScoreboard;
     private File extractedDriverFile;
+
     protected final ScorewizUtils scorewizUtils;
 
     @Inject
@@ -112,15 +114,15 @@ public class BaseScorewizRepository {
     }
 
     protected String getLoginURL() {
-        return BASE_URL + "/login";
+        return SW_BASE_URL + "/login";
     }
 
     protected String getLogoutURL() {
-        return BASE_URL + "/logout";
+        return SW_BASE_URL + "/logout";
     }
 
     protected String getNewURL() {
-        return BASE_URL + "/new";
+        return SW_BASE_URL + "/new";
     }
 
     public void login() {
@@ -205,7 +207,7 @@ public class BaseScorewizRepository {
     }
 
     protected List<WebElement> findMainMenuButtons(MainMenuButtonType buttonType) {
-        driver.get(MENU_URL);
+        driver.get(SW_MENU_URL);
         waitPageLoads();
         return findMainMenuButtons(buttonType, driver.findElement(By.className("node")));
     }
