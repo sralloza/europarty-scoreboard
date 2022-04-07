@@ -87,19 +87,19 @@ public class BaseScorewizRepository {
         driver = new ChromeDriver(options);
     }
 
-    protected String getActionUrl(String action, String extraAction) {
-        return getActionUrl(action) + "/" + extraAction;
+    protected String getSetOptionsURL(String action) {
+        return getActionURL("setOptions") + "/" + action;
     }
 
-    protected String getActionUrl(String action) {
+    protected String getActionURL(String action) {
         if (selectedScoreboard == null) {
             throw new IllegalStateException("No scoreboard selected");
         }
-        return getActionUrl(action, selectedScoreboard);
+        return getActionURL(action, selectedScoreboard);
     }
 
-    private String getActionUrl(String action, Scoreboard scoreboard) {
-        return String.format(URL_ACTION_TEMPLATE, action, scoreboard.getSid(), scoreboard.getPass());
+    private String getActionURL(String action, Scoreboard scoreboard) {
+        return String.format(SW_ACTION_URL_TEMPLATE, action, scoreboard.getSid(), scoreboard.getPass());
     }
 
     protected String getScoreboardUrl() {
@@ -110,7 +110,7 @@ public class BaseScorewizRepository {
     }
 
     protected String getScoreboardUrl(Scoreboard scoreboard) {
-        return getActionUrl("menu", scoreboard);
+        return getActionURL("menu", scoreboard);
     }
 
     protected String getLoginURL() {

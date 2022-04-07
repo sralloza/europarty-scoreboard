@@ -61,7 +61,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
     }
 
     public void setJuries(List<Jury> juries) {
-        String juriesURL = getActionUrl("setOptions", "juries");
+        String juriesURL = getSetOptionsURL("juries");
         driver.get(juriesURL);
         waitPageLoads();
 
@@ -81,7 +81,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
 
 
     public List<String> getParticipants() {
-        String participantsURL = getActionUrl("setOptions", "participants");
+        String participantsURL = getSetOptionsURL("participants");
         driver.get(participantsURL);
         waitPageLoads();
 
@@ -97,7 +97,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
     }
 
     public void setParticipants(List<String> participants) {
-        String participantsURL = getActionUrl("setOptions", "participants");
+        String participantsURL = getSetOptionsURL("participants");
         driver.get(participantsURL);
         waitPageLoads();
         removeHeader();
@@ -114,7 +114,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
     public void genJuryMapping() {
         juryVoteURLMap = new HashMap<>();
 
-        driver.get(getActionUrl("votesOverview"));
+        driver.get(getActionURL("votesOverview"));
         waitPageLoads();
 
         List<WebElement> juryRows = driver.findElements(By.xpath("//tbody//tr"));
@@ -155,7 +155,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
     }
 
     public void setTelevotes(List<Televote> televotes) {
-        String televotesURL = getActionUrl("setTelevote");
+        String televotesURL = getActionURL("setTelevote");
         driver.get(televotesURL);
         waitPageLoads();
 
