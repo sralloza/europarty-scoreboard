@@ -9,8 +9,10 @@ import repositories.common.GoogleFormCommonRepository;
 
 import java.util.List;
 
+import static config.Config.GS_TELEVOTE_ID;
+
 public class GoogleFormTelevoteRepository extends GoogleFormCommonRepository implements TelevoteRepository {
-    private static final String SPREADSHEET_ID = Config.get("google.spreadsheets.televote.id");
+    private static final String SPREADSHEET_ID = GS_TELEVOTE_ID;
 
     private final GSVoteMapper mapper;
 

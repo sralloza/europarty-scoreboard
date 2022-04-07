@@ -20,9 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static config.Config.APPLICATION_NAME;
+import static config.Config.GOOGLE_CREDS_EMAIL;
+
 public class GoogleFormCommonRepository {
-    private static final String APPLICATION_NAME = Config.get("application.name");
-    private static final String SERVICE_ACCOUNT_EMAIL = Config.get("google.credentials.email");
     private static final String SPREADSHEET_RANGE = "A:L";
 
     private static String spreadsheetId;
@@ -47,7 +48,7 @@ public class GoogleFormCommonRepository {
         var creds = new GoogleCredential.Builder()
                 .setTransport(GoogleNetHttpTransport.newTrustedTransport())
                 .setJsonFactory(JacksonFactory.getDefaultInstance())
-                .setServiceAccountId(SERVICE_ACCOUNT_EMAIL)
+                .setServiceAccountId(GOOGLE_CREDS_EMAIL)
                 .setServiceAccountScopes(List.of(SheetsScopes.SPREADSHEETS))
                 .setServiceAccountPrivateKeyFromPemFile(keyFile)
                 .build();

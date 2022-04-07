@@ -10,8 +10,10 @@ import repositories.common.GoogleFormCommonRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static config.Config.GS_VOTE_ID;
+
 public class GoogleFormVoteRepository extends GoogleFormCommonRepository implements VoteRepository {
-    private static final String SPREADSHEET_ID = Config.get("google.spreadsheets.vote.id");
+    private static final String SPREADSHEET_ID = GS_VOTE_ID;
 
     private final GSVoteMapper mapper;
 

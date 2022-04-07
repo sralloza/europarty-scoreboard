@@ -23,12 +23,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static constants.EuropartyConstants.HEADLESS;
+import static config.Config.DEBUG;
+import static config.Config.SW_BASE_URL;
+import static config.Config.SW_PASSWORD;
+import static config.Config.SW_USERNAME;
 import static constants.ScorewizConstants.LOCAL_WEBDRIVER_PATH;
-import static constants.ScorewizConstants.SCOREWIZ_PASSWORD;
-import static constants.ScorewizConstants.SCOREWIZ_USERNAME;
 import static constants.ScorewizConstants.SW_ACTION_URL_TEMPLATE;
-import static constants.ScorewizConstants.SW_BASE_URL;
 import static constants.ScorewizConstants.SW_MENU_URL;
 import static constants.ScorewizConstants.WEBDRIVER_NAME;
 import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
@@ -79,7 +79,7 @@ public class BaseScorewizRepository {
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
-        if (HEADLESS) {
+        if (DEBUG) {
             options.addArguments("--headless");
         }
 
@@ -127,8 +127,8 @@ public class BaseScorewizRepository {
     public void login() {
         provisionDriver();
         driver.get(getLoginURL());
-        driver.findElement(By.name("email")).sendKeys(SCOREWIZ_USERNAME);
-        driver.findElement(By.name("pass")).sendKeys(SCOREWIZ_PASSWORD);
+        driver.findElement(By.name("email")).sendKeys(SW_USERNAME);
+        driver.findElement(By.name("pass")).sendKeys(SW_PASSWORD);
 
         submit(TAG_INPUT_TYPE_SUBMIT);
     }

@@ -1,31 +1,70 @@
 package config;
 
+import exceptions.ConfigException;
 import exceptions.JarResourceNotFoundException;
 import exceptions.NormalResourceNotFoundException;
+import io.github.cdimascio.dotenv.Dotenv;
 import lombok.SneakyThrows;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
-import java.util.Properties;
 
 import static constants.EuropartyConstants.RESOURCES_PATH;
 
 public class Config {
-    private static Config instance;
-    private final Properties properties;
+    public static final String SW_USERNAME = getString("SW_USERNAME", true);
+    public static final String SW_PASSWORD = getString("SW_PASSWORD", true);
+    public static final String SW_BASE_URL = getString("SW_BASE_URL", false, "http://scorewiz.eu");
+    public static final String SW_SCOREBOARD_NAME = getString("SW_SCOREBOARD_NAME", false, "Europarty 2022");
+    public static final boolean DEBUG = getBoolean("DEBUG", false, false);
+    public static final String APPLICATION_NAME = getString("APPLICATION_NAME", false, "Europarty 2022");
+    public static final String GOOGLE_CREDS_EMAIL = getString("GOOGLE_CREDS_EMAIL", true);
+    public static final String GS_VOTE_ID = getString("GS_VOTE_ID", true);
+    public static final String GS_TELEVOTE_ID = getString("GS_TELEVOTE_ID", true);
 
-    public Config() {
-        properties = new Properties();
-        try {
-            InputStream input = getResource("config.properties");
-            properties.load(input);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
+
+    private static boolean dotenvLoaded = false;
+
+    private Config() {
+    }
+
+    private static void ensureDotenvLoaded() {
+        if (dotenvLoaded) {
+            return;
         }
+        Dotenv.configure()
+                .ignoreIfMissing()
+                .systemProperties()
+                .load();
+        dotenvLoaded = true;
+    }
+
+    public static String getString(String key, boolean isRequired, String defaultValue) {
+        ensureDotenvLoaded();
+        if (!isRequired && defaultValue == null) {
+            throw new RuntimeException("A non required value can't have null as default value: " + key);
+        }
+        var result = Optional.ofNullable(System.getenv(key))
+                .orElse(System.getProperty(key));
+        if (isRequired) {
+            return Optional.ofNullable(result).orElseThrow(() -> new ConfigException(key));
+        }
+        return Optional.ofNullable(result).orElse(defaultValue);
+    }
+
+    public static String getString(String key, boolean isRequired) {
+        return getString(key, isRequired, null);
+    }
+
+    public static boolean getBoolean(String key, boolean isRequired, Boolean defaultValue) {
+        return Optional.ofNullable(getString(key, isRequired, defaultValue.toString()))
+                .map(Boolean::parseBoolean).orElse(defaultValue);
+    }
+
+    public static boolean getBoolean(String key, boolean isRequired) {
+        return getBoolean(key, isRequired, null);
     }
 
     @SneakyThrows
@@ -42,16 +81,5 @@ public class Config {
             return Optional.of(stream)
                     .orElseThrow(() -> new NormalResourceNotFoundException(finalPath));
         }
-    }
-
-    public static Config getInstance() {
-        if (instance == null) {
-            instance = new Config();
-        }
-        return instance;
-    }
-
-    public static String get(String key) {
-        return getInstance().properties.getProperty(key);
     }
 }
