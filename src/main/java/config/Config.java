@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.util.Optional;
 import java.util.Properties;
 
+import static constants.EuropartyConstants.RESOURCES_PATH;
+
 public class Config {
     private static Config instance;
     private final Properties properties;
@@ -35,7 +37,7 @@ public class Config {
             return Optional.ofNullable(Config.class.getResourceAsStream("/" + path))
                     .orElseThrow(() -> new JarResourceNotFoundException(finalPath));
         } else {
-            final String finalPath = "src/main/resources/" + path;
+            final String finalPath = RESOURCES_PATH + path;
             InputStream stream = new FileInputStream(finalPath);
             return Optional.of(stream)
                     .orElseThrow(() -> new NormalResourceNotFoundException(finalPath));

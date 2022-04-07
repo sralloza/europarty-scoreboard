@@ -24,17 +24,16 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static constants.EuropartyConstants.HEADLESS;
+import static constants.ScorewizConstants.LOCAL_WEBDRIVER_PATH;
 import static constants.ScorewizConstants.SCOREWIZ_PASSWORD;
 import static constants.ScorewizConstants.SCOREWIZ_USERNAME;
 import static constants.ScorewizConstants.SW_ACTION_URL_TEMPLATE;
 import static constants.ScorewizConstants.SW_BASE_URL;
 import static constants.ScorewizConstants.SW_MENU_URL;
+import static constants.ScorewizConstants.WEBDRIVER_NAME;
 import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
 
 public class BaseScorewizRepository {
-    private static final String WEBDRIVER_NAME = "chromedriver";
-    private static final File LOCAL_WEBDRIVER_PATH = new File("src/main/resources/" + WEBDRIVER_NAME);
-
     protected WebDriver driver;
     protected Map<String, String> juryVoteURLMap;
     protected Scoreboard selectedScoreboard;
