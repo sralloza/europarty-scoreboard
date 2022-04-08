@@ -1,7 +1,6 @@
 package services;
 
 import com.google.inject.Inject;
-import exceptions.CountryNotFoundException;
 import exceptions.ParticipantsValidationEception;
 import models.Jury;
 import models.Scoreboard;
@@ -12,23 +11,27 @@ import repositories.ParticipantRepository;
 import repositories.scorewiz.ScorewizRepository;
 import repositories.televote.TelevoteRepository;
 import repositories.vote.VoteRepository;
+import validators.GlobalValidator;
 
 import java.io.IOException;
 import java.util.List;
 
 public class ScoreWizService {
+    private final GlobalValidator validator;
     private final JuryRepository juryRepository;
     private final ParticipantRepository participantRepository;
     private final ScorewizRepository scorewizRepository;
-    private final VoteRepository votesRepository;
     private final TelevoteRepository televoteRepository;
+    private final VoteRepository votesRepository;
 
     @Inject
-    public ScoreWizService(JuryRepository juryRepository,
+    public ScoreWizService(GlobalValidator validator,
+                           JuryRepository juryRepository,
                            ParticipantRepository participantRepository,
                            ScorewizRepository scorewizRepository,
                            TelevoteRepository televoteRepository,
                            VoteRepository votesRepository) {
+        this.validator = validator;
         this.juryRepository = juryRepository;
         this.participantRepository = participantRepository;
         this.scorewizRepository = scorewizRepository;
@@ -39,13 +42,13 @@ public class ScoreWizService {
     public void createScoreboard(String name) throws IOException {
         List<Jury> juries = juryRepository.getJuries();
         List<String> participants = participantRepository.getParticipants();
-        validateJuries(participants, juries);
+        validator.validateJuries(participants, juries);
 
         List<Vote> votes = votesRepository.getJuryVotes();
-        validateVotes(participants, votes);
+        validator.validateVotes(participants, votes);
 
         List<Televote> televotes = televoteRepository.getTelevotes();
-        validateTelevotes(participants, televotes);
+        validator.validateTelevotes(participants, televotes);
 
         scorewizRepository.login();
         scorewizRepository.createScoreboard(name);
@@ -64,10 +67,10 @@ public class ScoreWizService {
         List<Vote> juryVotes = votesRepository.getJuryVotes();
 
         List<String> requestedParticipants = participantRepository.getParticipants();
-        validateVotes(requestedParticipants, juryVotes);
+        validator.validateVotes(requestedParticipants, juryVotes);
 
         List<Televote> televotes = televoteRepository.getTelevotes();
-        validateTelevotes(requestedParticipants, televotes);
+        validator.validateTelevotes(requestedParticipants, televotes);
 
         scorewizRepository.login();
         scorewizRepository.openFirstScoreboard();
@@ -89,30 +92,6 @@ public class ScoreWizService {
             Jury jury = juryRepository.getByName(vote.getJuryName());
             scorewizRepository.registerSingleJuryVotes(jury, vote);
         }
-    }
-
-    private void validateVotes(List<String> savedParticipants, List<Vote> juryVotes) {
-        juryVotes.forEach(vote -> vote.getAllPoints().forEach(s -> {
-            if (!savedParticipants.contains(s)) {
-                throw new CountryNotFoundException(s, vote.getJuryName());
-            }
-        }));
-    }
-
-    private void validateTelevotes(List<String> savedParticipants, List<Televote> televotes) {
-        televotes.forEach(televote -> {
-            if (!savedParticipants.contains(televote.getCountry())) {
-                throw new CountryNotFoundException(televote);
-            }
-        });
-    }
-
-    private void validateJuries(List<String> savedParticipants, List<Jury> juries) {
-        juries.forEach(jury -> {
-            if (!savedParticipants.contains(jury.getCountry())) {
-                throw new CountryNotFoundException(jury);
-            }
-        });
     }
 
     public void deleteAllScoreboards() {
