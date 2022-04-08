@@ -46,7 +46,7 @@ public class ScoreWizService {
         validator.validateJuries(participants, juries);
 
         List<Vote> votes = votesRepository.getJuryVotes();
-        validateVotes(participants, votes);
+        validator.validateVotes(participants, votes);
 
         List<Televote> televotes = televoteRepository.getTelevotes();
         validateTelevotes(participants, televotes);
@@ -68,7 +68,7 @@ public class ScoreWizService {
         List<Vote> juryVotes = votesRepository.getJuryVotes();
 
         List<String> requestedParticipants = participantRepository.getParticipants();
-        validateVotes(requestedParticipants, juryVotes);
+        validator.validateVotes(requestedParticipants, juryVotes);
 
         List<Televote> televotes = televoteRepository.getTelevotes();
         validateTelevotes(requestedParticipants, televotes);
@@ -95,14 +95,6 @@ public class ScoreWizService {
         }
     }
 
-    private void validateVotes(List<String> savedParticipants, List<Vote> juryVotes) {
-        juryVotes.forEach(vote -> vote.getAllPoints().forEach(s -> {
-            if (!savedParticipants.contains(s)) {
-                throw new CountryNotFoundException(s, vote.getJuryName());
-            }
-        }));
-    }
-
     private void validateTelevotes(List<String> savedParticipants, List<Televote> televotes) {
         televotes.forEach(televote -> {
             if (!savedParticipants.contains(televote.getCountry())) {
@@ -110,7 +102,6 @@ public class ScoreWizService {
             }
         });
     }
-
 
     public void deleteAllScoreboards() {
         scorewizRepository.login();

@@ -7,7 +7,7 @@ import java.util.List;
 
 public class JuriesValidator {
 
-    public void validateJuries(List<String> savedParticipants, List<Jury> juries) {
+    public void validate(List<String> savedParticipants, List<Jury> juries) {
         juries.forEach(jury -> {
             if (!savedParticipants.contains(jury.getCountry())) {
                 throw new CountryNotFoundException(jury);
