@@ -1,7 +1,6 @@
 package services;
 
 import com.google.inject.Inject;
-import exceptions.CountryNotFoundException;
 import exceptions.ParticipantsValidationEception;
 import models.Jury;
 import models.Scoreboard;
@@ -49,7 +48,7 @@ public class ScoreWizService {
         validator.validateVotes(participants, votes);
 
         List<Televote> televotes = televoteRepository.getTelevotes();
-        validateTelevotes(participants, televotes);
+        validator.validateTelevotes(participants, televotes);
 
         scorewizRepository.login();
         scorewizRepository.createScoreboard(name);
@@ -71,7 +70,7 @@ public class ScoreWizService {
         validator.validateVotes(requestedParticipants, juryVotes);
 
         List<Televote> televotes = televoteRepository.getTelevotes();
-        validateTelevotes(requestedParticipants, televotes);
+        validator.validateTelevotes(requestedParticipants, televotes);
 
         scorewizRepository.login();
         scorewizRepository.openFirstScoreboard();
@@ -93,14 +92,6 @@ public class ScoreWizService {
             Jury jury = juryRepository.getByName(vote.getJuryName());
             scorewizRepository.registerSingleJuryVotes(jury, vote);
         }
-    }
-
-    private void validateTelevotes(List<String> savedParticipants, List<Televote> televotes) {
-        televotes.forEach(televote -> {
-            if (!savedParticipants.contains(televote.getCountry())) {
-                throw new CountryNotFoundException(televote);
-            }
-        });
     }
 
     public void deleteAllScoreboards() {
