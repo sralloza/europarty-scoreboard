@@ -1,12 +1,10 @@
 package repositories;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import constants.EuropartyConstants;
 import exceptions.JuryNameNotFoundException;
 import models.Jury;
 import repositories.common.LocalCommonRepository;
 
-import java.io.IOException;
 import java.util.List;
 
 import static constants.EuropartyConstants.JsonFiles.JURIES;

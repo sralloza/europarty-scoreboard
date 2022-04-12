@@ -89,7 +89,7 @@ public class ScoreWizService {
         scorewizRepository.logout();
     }
 
-    private void registerAllJuriesVotes(List<Vote> juryVotes) throws IOException {
+    private void registerAllJuriesVotes(List<Vote> juryVotes) {
         for (Vote vote : juryVotes) {
             Jury jury = juryRepository.getByName(vote.getJuryName());
             scorewizRepository.registerSingleJuryVotes(jury, vote);

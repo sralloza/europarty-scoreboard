@@ -1,7 +1,6 @@
 package repositories.televote;
 
 import com.google.inject.Inject;
-import config.Config;
 import mappers.GSVoteMapper;
 import models.GoogleSheetsVote;
 import models.Televote;

@@ -182,11 +182,11 @@ jobs:
           GS_VOTE_ID: ${{ secrets.GOOGLE_SPREADSHEET_VOTE_ID }}
           GS_TELEVOTE_ID: ${{ secrets.GOOGLE_SPREADSHEET_TELEVOTE_ID }}
 
-#      - uses: actions/upload-artifact@v2
-#        if: always()
-#        with:
-#          name: "Test resources for Pull Request #${{github.event.number}}"
-#          path: src/main/resources
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: "Test resources for Pull Request #${{github.event.number}}"
+          path: build
 
 #      - uses: actions/upload-artifact@v2
 #        with:
