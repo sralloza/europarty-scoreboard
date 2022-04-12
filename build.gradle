@@ -18,6 +18,10 @@ test {
     }
 }
 
+task X {}
+
+test.dependsOn X
+
 group 'es.sralloza'
 version '1.0-SNAPSHOT'
 mainClassName = 'ScoreboardCreationByForm'

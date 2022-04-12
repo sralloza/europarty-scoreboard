@@ -135,6 +135,12 @@ public class ScorewizRepository extends BaseScorewizRepository {
     }
 
     public void registerSingleJuryVotes(Jury jury, Vote userVotes) {
+        if (juryVoteURLMap == null) {
+            throw new JuryMappingNotFoundException();
+        }
+        if (jury == null) {
+            throw new RuntimeException("Jury is null");
+        }
         String juryVoteURL = Optional.ofNullable(juryVoteURLMap.get(jury.getLocalName()))
                 .orElseThrow(() -> new JuryNameNotFoundException(jury, juryVoteURLMap));
 
