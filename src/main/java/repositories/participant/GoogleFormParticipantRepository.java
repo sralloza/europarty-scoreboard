@@ -3,9 +3,8 @@ package repositories.participant;
 import com.google.inject.Inject;
 import mappers.GSParticipantMapper;
 import models.GoogleSheetsParticipant;
-import models.Jury;
+import models.Participant;
 import repositories.common.GoogleFormCommonRepository;
-import repositories.jury.JuryRepository;
 
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class GoogleFormParticipantRepository extends GoogleFormCommonRepository 
     }
 
     @Override
-    public List<String> getParticipants() {
+    public List<Participant> getParticipants() {
         List<GoogleSheetsParticipant> googleSheetsParticipants = getGoogleSheetsParticipants();
         return mapper.buildParticipants(googleSheetsParticipants);
     }

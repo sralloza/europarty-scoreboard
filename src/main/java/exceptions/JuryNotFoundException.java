@@ -9,10 +9,6 @@ public class JuryNotFoundException extends RuntimeException {
         super("Can't find jury by name " + jury.getName() + " (juryVoteURLMap=" + juryVoteURLMap + ")");
     }
 
-    public JuryNotFoundException(String juryName, String reason) {
-        super("Can't find jury by name " + juryName + " (reason=" + reason + ")");
-    }
-
     public JuryNotFoundException(String name) {
         super("Can't find jury by name " + name);
     }

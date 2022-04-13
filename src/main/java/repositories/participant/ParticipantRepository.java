@@ -1,7 +1,9 @@
 package repositories.participant;
 
+import models.Participant;
+
 import java.util.List;
 
 public interface ParticipantRepository {
-    List<String> getParticipants();
+    List<Participant> getParticipants();
 }

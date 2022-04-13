@@ -2,6 +2,7 @@ package mappers;
 
 import models.GoogleSheetsParticipant;
 import models.Jury;
+import models.Participant;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,7 +13,6 @@ public class GSParticipantMapper {
                 .setCountry(googleSheetsParticipant.getCountryName())
                 .setLocalName(googleSheetsParticipant.getJuryLocalName())
                 .setName(googleSheetsParticipant.getJuryRealName());
-
     }
 
     public List<Jury> buildJuries(List<GoogleSheetsParticipant> googleSheetsParticipants) {
@@ -23,9 +23,15 @@ public class GSParticipantMapper {
                 .collect(Collectors.toList());
     }
 
-    public List<String> buildParticipants(List<GoogleSheetsParticipant> googleSheetsParticipants) {
+    public Participant buildParticipant(GoogleSheetsParticipant googleSheetsParticipant) {
+        return new Participant()
+                .setName(googleSheetsParticipant.getCountryName())
+                .setExcluded(googleSheetsParticipant.isExcluded());
+    }
+
+    public List<Participant> buildParticipants(List<GoogleSheetsParticipant> googleSheetsParticipants) {
         return googleSheetsParticipants.stream()
-                .map(GoogleSheetsParticipant::getCountryName)
+                .map(this::buildParticipant)
                 .collect(Collectors.toList());
     }
 }

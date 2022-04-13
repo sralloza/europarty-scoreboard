@@ -3,6 +3,7 @@ package services;
 import com.google.inject.Inject;
 import exceptions.ParticipantsValidationEception;
 import models.Jury;
+import models.Participant;
 import models.Scoreboard;
 import models.Televote;
 import models.Vote;
@@ -40,7 +41,7 @@ public class ScoreWizService {
 
     public void createScoreboard(String name) {
         List<Jury> juries = juryRepository.getJuries();
-        List<String> participants = participantRepository.getParticipants();
+        List<Participant> participants = participantRepository.getParticipants();
         validator.validateJuries(participants, juries);
 
         List<Vote> votes = votesRepository.getJuryVotes();
@@ -66,7 +67,7 @@ public class ScoreWizService {
         List<Vote> juryVotes = votesRepository.getJuryVotes();
         List<Jury> juries = juryRepository.getJuries();
 
-        List<String> requestedParticipants = participantRepository.getParticipants();
+        List<Participant> requestedParticipants = participantRepository.getParticipants();
         validator.validateVotes(requestedParticipants, juries, juryVotes);
 
         validator.validateVotes(requestedParticipants, juries, juryVotes);
@@ -79,7 +80,7 @@ public class ScoreWizService {
         scorewizRepository.processScorewizVars();
         scorewizRepository.genJuryMapping();
 
-        List<String> savedParticipants = scorewizRepository.getParticipants();
+        List<Participant> savedParticipants = scorewizRepository.getParticipants();
         if (!savedParticipants.equals(requestedParticipants)) {
             throw new ParticipantsValidationEception(requestedParticipants, savedParticipants);
         }

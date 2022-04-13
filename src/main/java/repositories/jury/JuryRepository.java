@@ -1,5 +1,6 @@
 package repositories.jury;
 
+import exceptions.JuryNotFoundException;
 import models.Jury;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public interface JuryRepository {
                 return jury;
             }
         }
-        return null;
+        throw new JuryNotFoundException(name);
     }
 }
 

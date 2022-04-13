@@ -88,7 +88,7 @@ public class GoogleFormCommonRepository {
                 .collect(Collectors.toList());
 
         if (strValues.size() < 2) {
-            throw new NoValidVotesFoundException("No valid votes found (found only" + strValues.size() + "rows)");
+            throw new NoValidVotesFoundException("No valid lines found (found only" + strValues.size() + "rows)");
         }
 
         return strValues.stream()

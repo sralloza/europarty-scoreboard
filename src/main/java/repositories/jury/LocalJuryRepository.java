@@ -24,13 +24,4 @@ public class LocalJuryRepository extends LocalCommonRepository implements JuryRe
         });
         return juryList;
     }
-
-    public Jury getByName(String name) {
-        for (Jury jury : getJuries()) {
-            if (jury.getName().equals(name)) {
-                return jury;
-            }
-        }
-        throw new JuryNotFoundException(name);
-    }
 }
