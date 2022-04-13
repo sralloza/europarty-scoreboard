@@ -2,6 +2,7 @@ package repositories.scorewiz;
 
 import com.google.inject.Inject;
 import config.Config;
+import exceptions.LoginException;
 import exceptions.SelectorNotFoundException;
 import lombok.SneakyThrows;
 import models.Scoreboard;
@@ -131,6 +132,16 @@ public class BaseScorewizRepository {
         driver.findElement(By.name("pass")).sendKeys(SW_PASSWORD);
 
         submit(TAG_INPUT_TYPE_SUBMIT);
+
+        String url = driver.getCurrentUrl();
+
+        WebElement error = driver.findElement(By.id("error"));
+        if (error != null) {
+            throw new LoginException(driver.getCurrentUrl(), error.getText());
+        }
+        if (!url.equals(SW_MENU_URL)) {
+            throw new LoginException(driver.getCurrentUrl());
+        }
     }
 
     public void logout() {
