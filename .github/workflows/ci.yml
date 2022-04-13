@@ -164,6 +164,9 @@ jobs:
               }
             ]
 
+      - name: List provisioned files
+        run: ls -la src/main/resources
+
       - name: Grant execute permission to gradlew
         run: chmod +x gradlew
 
