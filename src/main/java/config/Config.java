@@ -23,6 +23,7 @@ public class Config {
     public static final String GOOGLE_CREDS_EMAIL = getString("GOOGLE_CREDS_EMAIL", true);
     public static final String GS_VOTE_ID = getString("GS_VOTE_ID", true);
     public static final String GS_TELEVOTE_ID = getString("GS_TELEVOTE_ID", true);
+    public static final String GS_PARTICIPANTS_ID = getString("GS_PARTICIPANTS_ID", true);
 
 
     private static boolean dotenvLoaded = false;

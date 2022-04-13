@@ -183,6 +183,7 @@ jobs:
           GOOGLE_CREDS_EMAIL: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_EMAIL }}
           GS_VOTE_ID: ${{ secrets.GOOGLE_SPREADSHEET_VOTE_ID }}
           GS_TELEVOTE_ID: ${{ secrets.GOOGLE_SPREADSHEET_TELEVOTE_ID }}
+          GS_PARTICIPANTS_ID: ${{ secrets.GOOGLE_SPREADSHEET_PARTICIPANTS_ID }}
 
       - uses: actions/upload-artifact@v2
         if: always()

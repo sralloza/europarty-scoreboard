@@ -2,6 +2,7 @@ package validators;
 
 import com.google.inject.Inject;
 import models.Jury;
+import models.Participant;
 import models.Televote;
 import models.Vote;
 
@@ -21,15 +22,15 @@ public class GlobalValidator {
         this.televotesValidator = televotesValidator;
     }
 
-    public void validateJuries(List<String> savedParticipants, List<Jury> juries) {
+    public void validateJuries(List<Participant> savedParticipants, List<Jury> juries) {
         juriesValidator.validate(savedParticipants, juries);
     }
 
-    public void validateVotes(List<String> requestedParticipants, List<Jury> juries, List<Vote> juryVotes) {
+    public void validateVotes(List<Participant> requestedParticipants, List<Jury> juries, List<Vote> juryVotes) {
         votesValidator.validate(requestedParticipants, juries, juryVotes);
     }
 
-    public void validateTelevotes(List<String> requestedParticipants, List<Televote> televotes) {
+    public void validateTelevotes(List<Participant> requestedParticipants, List<Televote> televotes) {
         televotesValidator.validate(requestedParticipants, televotes);
     }
 }

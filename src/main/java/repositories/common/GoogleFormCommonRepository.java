@@ -11,6 +11,7 @@ import config.Config;
 import exceptions.FileDeleteException;
 import exceptions.NoValidVotesFoundException;
 import lombok.SneakyThrows;
+import models.GoogleSheetsParticipant;
 import models.GoogleSheetsVote;
 import org.apache.commons.io.FileUtils;
 
@@ -18,24 +19,19 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static config.Config.APPLICATION_NAME;
 import static config.Config.GOOGLE_CREDS_EMAIL;
 
 public class GoogleFormCommonRepository {
-    private static final String SPREADSHEET_RANGE = "A:L";
-
-    private static String spreadsheetId;
-    private static String spreadsheetRange;
+    private final String spreadsheetId;
+    private final String spreadsheetRange;
 
     public GoogleFormCommonRepository(String spreadsheetId, String spreadsheetRange) {
-        GoogleFormCommonRepository.spreadsheetId = spreadsheetId;
-        GoogleFormCommonRepository.spreadsheetRange = spreadsheetRange;
-    }
-
-    public GoogleFormCommonRepository(String spreadsheetId) {
-        this(spreadsheetId, SPREADSHEET_RANGE);
+        this.spreadsheetId = spreadsheetId;
+        this.spreadsheetRange = spreadsheetRange;
     }
 
     private static Credential authorize() throws Exception {
@@ -67,8 +63,16 @@ public class GoogleFormCommonRepository {
                 .build();
     }
 
-    @SneakyThrows
     public List<GoogleSheetsVote> getGoogleSheetsVotes() {
+        return this.getRows(GoogleSheetsVote::new);
+    }
+
+    public List<GoogleSheetsParticipant> getGoogleSheetsParticipants() {
+        return this.getRows(GoogleSheetsParticipant::new);
+    }
+
+    @SneakyThrows
+    private <T> List<T> getRows(Function<List<String>, T> mapper) {
         Sheets sheetsService = getSheetsService();
         ValueRange response = sheetsService.spreadsheets().values()
                 .get(spreadsheetId, spreadsheetRange)
@@ -84,12 +88,12 @@ public class GoogleFormCommonRepository {
                 .collect(Collectors.toList());
 
         if (strValues.size() < 2) {
-            throw new NoValidVotesFoundException("No valid votes found (found only" + strValues.size() + "rows)");
+            throw new NoValidVotesFoundException("No valid lines found (found only" + strValues.size() + "rows)");
         }
 
         return strValues.stream()
                 .skip(1)
-                .map(GoogleSheetsVote::new)
+                .map(mapper)
                 .collect(Collectors.toList());
     }
 }

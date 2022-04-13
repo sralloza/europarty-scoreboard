@@ -3,9 +3,10 @@ package repositories.scorewiz;
 import com.google.inject.Inject;
 import exceptions.CountryNotFoundException;
 import exceptions.JuryMappingNotFoundException;
-import exceptions.JuryNameNotFoundException;
+import exceptions.JuryNotFoundException;
 import exceptions.NoScoreboardFoundException;
 import models.Jury;
+import models.Participant;
 import models.Scoreboard;
 import models.Televote;
 import models.Vote;
@@ -80,7 +81,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
     }
 
 
-    public List<String> getParticipants() {
+    public List<Participant> getParticipants() {
         String participantsURL = getSetOptionsURL("participants");
         driver.get(participantsURL);
         waitPageLoads();
@@ -93,17 +94,18 @@ public class ScorewizRepository extends BaseScorewizRepository {
                         }
                 )
                 .takeWhile(s -> !s.isEmpty())
+                .map(p -> new Participant().setName(p))
                 .collect(Collectors.toList());
     }
 
-    public void setParticipants(List<String> participants) {
+    public void setParticipants(List<Participant> participants) {
         String participantsURL = getSetOptionsURL("participants");
         driver.get(participantsURL);
         waitPageLoads();
         removeHeader();
 
         IntStream.range(0, participants.size()).forEach(i -> {
-                    String participant = participants.get(i);
+                    String participant = participants.get(i).getName();
                     setCountryInFormWithAutocomplete(participant, i + 1);
                 }
         );
@@ -142,7 +144,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
             throw new RuntimeException("Jury is null");
         }
         String juryVoteURL = Optional.ofNullable(juryVoteURLMap.get(jury.getLocalName()))
-                .orElseThrow(() -> new JuryNameNotFoundException(jury, juryVoteURLMap));
+                .orElseThrow(() -> new JuryNotFoundException(jury, juryVoteURLMap));
 
         driver.get(juryVoteURL);
         waitPageLoads();

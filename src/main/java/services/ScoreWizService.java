@@ -3,17 +3,17 @@ package services;
 import com.google.inject.Inject;
 import exceptions.ParticipantsValidationEception;
 import models.Jury;
+import models.Participant;
 import models.Scoreboard;
 import models.Televote;
 import models.Vote;
-import repositories.JuryRepository;
-import repositories.ParticipantRepository;
+import repositories.jury.JuryRepository;
+import repositories.participant.ParticipantRepository;
 import repositories.scorewiz.ScorewizRepository;
 import repositories.televote.TelevoteRepository;
 import repositories.vote.VoteRepository;
 import validators.GlobalValidator;
 
-import java.io.IOException;
 import java.util.List;
 
 public class ScoreWizService {
@@ -39,9 +39,9 @@ public class ScoreWizService {
         this.votesRepository = votesRepository;
     }
 
-    public void createScoreboard(String name) throws IOException {
+    public void createScoreboard(String name) {
         List<Jury> juries = juryRepository.getJuries();
-        List<String> participants = participantRepository.getParticipants();
+        List<Participant> participants = participantRepository.getParticipants();
         validator.validateJuries(participants, juries);
 
         List<Vote> votes = votesRepository.getJuryVotes();
@@ -63,11 +63,12 @@ public class ScoreWizService {
         scorewizRepository.logout();
     }
 
-    public void setJuryVotes() throws IOException {
+    public void setJuryVotes() {
         List<Vote> juryVotes = votesRepository.getJuryVotes();
-
-        List<String> requestedParticipants = participantRepository.getParticipants();
         List<Jury> juries = juryRepository.getJuries();
+
+        List<Participant> requestedParticipants = participantRepository.getParticipants();
+        validator.validateVotes(requestedParticipants, juries, juryVotes);
 
         validator.validateVotes(requestedParticipants, juries, juryVotes);
 
@@ -79,7 +80,7 @@ public class ScoreWizService {
         scorewizRepository.processScorewizVars();
         scorewizRepository.genJuryMapping();
 
-        List<String> savedParticipants = scorewizRepository.getParticipants();
+        List<Participant> savedParticipants = scorewizRepository.getParticipants();
         if (!savedParticipants.equals(requestedParticipants)) {
             throw new ParticipantsValidationEception(requestedParticipants, savedParticipants);
         }
