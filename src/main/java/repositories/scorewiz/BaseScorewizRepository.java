@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptException;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -133,14 +134,19 @@ public class BaseScorewizRepository {
 
         submit(TAG_INPUT_TYPE_SUBMIT);
 
+        ensureLoginCorrect();
+    }
+
+    private void ensureLoginCorrect() {
         String url = driver.getCurrentUrl();
 
-        WebElement error = driver.findElement(By.id("error"));
-        if (error != null) {
+        try {
+            WebElement error = driver.findElement(By.id("error"));
             throw new LoginException(driver.getCurrentUrl(), error.getText(), SW_USERNAME, SW_PASSWORD);
-        }
-        if (!url.equals(SW_MENU_URL)) {
-            throw new LoginException(driver.getCurrentUrl());
+        } catch (NoSuchElementException e) {
+            if (!url.equals(SW_MENU_URL)) {
+                throw new LoginException(driver.getCurrentUrl());
+            }
         }
     }
 
