@@ -5,6 +5,39 @@ plugins {
     id "io.freefair.lombok" version "6.4.1"
 }
 
+test {
+    testLogging {
+        events "passed", "skipped", "failed"
+
+        showExceptions true
+        exceptionFormat "full"
+        showCauses true
+        showStackTraces true
+
+        showStandardStreams false
+    }
+}
+
+ext.getTestVariable = { asked ->
+    if (!file("src/main/resources/test.env").exists()) {
+        return null
+    }
+    file('src/main/resources/test.env').eachLine { line ->
+        def (key, value) = line.tokenize('=')
+        if (key == asked) {
+            System.setProperty(asked, value)
+        }
+    }
+    return System.getProperty(asked)
+}
+
+if (project.getTestVariable('SW_USERNAME') != null) {
+    tasks.test.environment("SW_USERNAME", project.getTestVariable('SW_USERNAME'))
+}
+if (project.getTestVariable('SW_PASSWORD') != null) {
+    tasks.test.environment("SW_PASSWORD", project.getTestVariable("SW_PASSWORD"))
+}
+
 group 'es.sralloza'
 version '1.0-SNAPSHOT'
 mainClassName = 'ScoreboardCreationByForm'

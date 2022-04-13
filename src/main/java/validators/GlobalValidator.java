@@ -25,8 +25,8 @@ public class GlobalValidator {
         juriesValidator.validate(savedParticipants, juries);
     }
 
-    public void validateVotes(List<String> requestedParticipants, List<Vote> juryVotes) {
-        votesValidator.validate(requestedParticipants, juryVotes);
+    public void validateVotes(List<String> requestedParticipants, List<Jury> juries, List<Vote> juryVotes) {
+        votesValidator.validate(requestedParticipants, juries, juryVotes);
     }
 
     public void validateTelevotes(List<String> requestedParticipants, List<Televote> televotes) {

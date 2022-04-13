@@ -1,11 +1,10 @@
 package repositories;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import constants.EuropartyConstants;
+import exceptions.JuryNameNotFoundException;
 import models.Jury;
 import repositories.common.LocalCommonRepository;
 
-import java.io.IOException;
 import java.util.List;
 
 import static constants.EuropartyConstants.JsonFiles.JURIES;
@@ -26,12 +25,12 @@ public class JuryRepository extends LocalCommonRepository {
         return juryList;
     }
 
-    public Jury getByName(String name) throws IOException {
+    public Jury getByName(String name) {
         for (Jury jury : getJuries()) {
             if (jury.getName().equals(name)) {
                 return jury;
             }
         }
-        return null;
+        throw new JuryNameNotFoundException(name);
     }
 }

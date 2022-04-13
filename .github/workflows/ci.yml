@@ -1,0 +1,196 @@
+name: E2E Tests
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  Build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: 11
+
+      - name: Ping scorewiz
+        run: curl -s https://scorewiz.eu
+
+      - name: Setup chromedriver
+        uses: nanasess/setup-chromedriver@v1
+
+      - name: Move chromedriver to resource folder
+        run: cp $(which chromedriver) src/main/resources/chromedriver
+
+      - name: Provision file key.pem
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "src/main/resources/key.pem"
+          json: ${{ secrets.GOOGLE_PRIVATE_KEY }}
+
+      - name: Provision file participants.json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "src/main/resources/participants.json"
+          json: |
+            [
+              "Albania",
+              "Armenia",
+              "Australia",
+              "Austria",
+              "Azerbaijan",
+              "Belgium",
+              "Bulgaria",
+              "Croatia",
+              "Cyprus",
+              "Czech Republic",
+              "Denmark",
+              "Estonia",
+              "Finland",
+              "France",
+              "Georgia",
+              "Germany",
+              "Greece",
+              "Iceland",
+              "Ireland",
+              "Israel",
+              "Italy",
+              "Latvia",
+              "Lithuania",
+              "Malta",
+              "Moldova",
+              "Montenegro",
+              "Netherlands",
+              "North Macedonia",
+              "Norway",
+              "Poland",
+              "Portugal",
+              "Romania",
+              "San Marino",
+              "Serbia",
+              "Slovenia",
+              "Spain",
+              "Sweden",
+              "Switzerland",
+              "Ukraine",
+              "United Kingdom"
+            ]
+
+      - name: Provision file televotes.json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "src/main/resources/televotes.json"
+          json: |
+            {
+              "Albania": 49,
+              "Armenia": 41,
+              "Australia": 37,
+              "Austria": 93,
+              "Azerbaijan": 42,
+              "Belgium": 91,
+              "Bulgaria": 40,
+              "Croatia": 32,
+              "Cyprus": 72,
+              "Czech Republic": 93,
+              "Denmark": 40,
+              "Estonia": 73,
+              "Finland": 63,
+              "France": 35,
+              "Georgia": 77,
+              "Germany": 18,
+              "Greece": 79,
+              "Iceland": 94,
+              "Ireland": 22,
+              "Israel": 30,
+              "Italy": 44,
+              "Latvia": 62,
+              "Lithuania": 21,
+              "Malta": 10,
+              "Moldova": 59,
+              "Montenegro": 27,
+              "Netherlands": 74,
+              "North Macedonia": 47,
+              "Norway": 72,
+              "Poland": 85,
+              "Portugal": 58,
+              "Romania": 77,
+              "San Marino": 56,
+              "Serbia": 37,
+              "Slovenia": 54,
+              "Spain": 39,
+              "Sweden": 12,
+              "Switzerland": 43,
+              "Ukraine": 85,
+              "United Kingdom": 66
+            }
+
+      - name: Provision file votes.json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "src/main/resources/votes.json"
+          json: |
+            [
+              {
+                "juryName": "AlbaniaName",
+                "12": "Germany",
+                "10": "Latvia",
+                "8": "Italy",
+                "7": "Greece",
+                "6": "Netherlands",
+                "5": "Slovenia",
+                "4": "Switzerland",
+                "3": "Spain",
+                "2": "Albania",
+                "1": "United Kingdom"
+              }
+            ]
+
+      - name: Provision file juries.json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "src/main/resources/juries.json"
+          json: |
+            [
+              {
+                "country": "Albania",
+                "localName": "AlbaniaLocalName",
+                "name": "AlbaniaName"
+              }
+            ]
+
+      - name: List provisioned files
+        run: ls -la src/main/resources
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x gradlew
+
+      - name: Test with Gradle
+        run: |
+          export DISPLAY=:99
+          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
+          ./gradlew test -i --no-parallel
+        env:
+          SW_USERNAME: ${{ secrets.SCOREWIZ_USERNAME }}
+          SW_PASSWORD: ${{ secrets.SCOREWIZ_PASSWORD }}
+          SW_BASE_URL: https://scorewiz.eu
+          SW_SCOREBOARD_NAME: CI-TEST
+          GOOGLE_CREDS_EMAIL: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_EMAIL }}
+          GS_VOTE_ID: ${{ secrets.GOOGLE_SPREADSHEET_VOTE_ID }}
+          GS_TELEVOTE_ID: ${{ secrets.GOOGLE_SPREADSHEET_TELEVOTE_ID }}
+
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: "Test Results"
+          path: build
+
+#      - uses: actions/upload-artifact@v2
+#        with:
+#          name: "Compiled artifacts for Pull Request #${{github.event.number}}"
+#          path: build/libs

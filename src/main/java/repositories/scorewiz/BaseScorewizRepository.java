@@ -2,6 +2,7 @@ package repositories.scorewiz;
 
 import com.google.inject.Inject;
 import config.Config;
+import exceptions.LoginException;
 import exceptions.SelectorNotFoundException;
 import lombok.SneakyThrows;
 import models.Scoreboard;
@@ -9,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptException;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -79,7 +81,7 @@ public class BaseScorewizRepository {
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
-        if (DEBUG) {
+        if (!DEBUG) {
             options.addArguments("--headless");
         }
 
@@ -131,6 +133,21 @@ public class BaseScorewizRepository {
         driver.findElement(By.name("pass")).sendKeys(SW_PASSWORD);
 
         submit(TAG_INPUT_TYPE_SUBMIT);
+
+        ensureLoginCorrect();
+    }
+
+    private void ensureLoginCorrect() {
+        String url = driver.getCurrentUrl();
+
+        try {
+            WebElement error = driver.findElement(By.id("error"));
+            throw new LoginException(driver.getCurrentUrl(), error.getText(), SW_USERNAME, SW_PASSWORD);
+        } catch (NoSuchElementException e) {
+            if (!url.equals(SW_MENU_URL)) {
+                throw new LoginException(driver.getCurrentUrl());
+            }
+        }
     }
 
     public void logout() {

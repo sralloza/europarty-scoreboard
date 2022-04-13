@@ -45,7 +45,7 @@ public class ScoreWizService {
         validator.validateJuries(participants, juries);
 
         List<Vote> votes = votesRepository.getJuryVotes();
-        validator.validateVotes(participants, votes);
+        validator.validateVotes(participants, juries, votes);
 
         List<Televote> televotes = televoteRepository.getTelevotes();
         validator.validateTelevotes(participants, televotes);
@@ -67,7 +67,9 @@ public class ScoreWizService {
         List<Vote> juryVotes = votesRepository.getJuryVotes();
 
         List<String> requestedParticipants = participantRepository.getParticipants();
-        validator.validateVotes(requestedParticipants, juryVotes);
+        List<Jury> juries = juryRepository.getJuries();
+
+        validator.validateVotes(requestedParticipants, juries, juryVotes);
 
         List<Televote> televotes = televoteRepository.getTelevotes();
         validator.validateTelevotes(requestedParticipants, televotes);
@@ -87,7 +89,7 @@ public class ScoreWizService {
         scorewizRepository.logout();
     }
 
-    private void registerAllJuriesVotes(List<Vote> juryVotes) throws IOException {
+    private void registerAllJuriesVotes(List<Vote> juryVotes) {
         for (Vote vote : juryVotes) {
             Jury jury = juryRepository.getByName(vote.getJuryName());
             scorewizRepository.registerSingleJuryVotes(jury, vote);
