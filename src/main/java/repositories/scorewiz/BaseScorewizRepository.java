@@ -137,7 +137,7 @@ public class BaseScorewizRepository {
 
         WebElement error = driver.findElement(By.id("error"));
         if (error != null) {
-            throw new LoginException(driver.getCurrentUrl(), error.getText());
+            throw new LoginException(driver.getCurrentUrl(), error.getText(), SW_USERNAME, SW_PASSWORD);
         }
         if (!url.equals(SW_MENU_URL)) {
             throw new LoginException(driver.getCurrentUrl());
