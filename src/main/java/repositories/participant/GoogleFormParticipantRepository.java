@@ -10,16 +10,16 @@ import repositories.jury.JuryRepository;
 import java.util.List;
 
 import static config.Config.GS_PARTICIPANTS_ID;
+import static constants.GoogleSheetsConstants.GS_PARTICIPANTS_RANGE;
 
 public class GoogleFormParticipantRepository extends GoogleFormCommonRepository implements ParticipantRepository {
     private static final String SPREADSHEET_ID = GS_PARTICIPANTS_ID;
-    private static final String RANGE = "A:C";
 
     private final GSParticipantMapper mapper;
 
     @Inject
     public GoogleFormParticipantRepository(GSParticipantMapper mapper) {
-        super(SPREADSHEET_ID, RANGE);
+        super(SPREADSHEET_ID, GS_PARTICIPANTS_RANGE);
         this.mapper = mapper;
     }
 
