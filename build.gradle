@@ -20,7 +20,7 @@ test {
 
 ext.getTestVariable = {asked ->
     if (!file("src/main/resources/test.env").exists()) {
-        null
+        return null
     }
     file('src/main/resources/test.env').eachLine {line ->
         def (key, value) = line.tokenize('=')
