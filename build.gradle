@@ -18,9 +18,22 @@ test {
     }
 }
 
-task X {}
+ext.getTestVariable = {asked ->
+    if (!file("src/main/resources/test.env").exists()) {
+        null
+    }
+    file('src/main/resources/test.env').eachLine {line ->
+        def (key, value) = line.tokenize('=')
+        if (key == asked) {
+            System.setProperty(asked, value)
+            project.println(key + ": " + value)
+        }
+    }
+    return System.getProperty(asked)
+}
 
-test.dependsOn X
+tasks.test.environment("SW_USERNAME", project.getTestVariable('SW_USERNAME'))
+tasks.test.environment("SW_PASSWORD", project.getTestVariable("SW_PASSWORD"))
 
 group 'es.sralloza'
 version '1.0-SNAPSHOT'

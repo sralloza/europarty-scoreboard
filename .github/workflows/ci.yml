@@ -185,7 +185,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         if: always()
         with:
-          name: "Test resources for Pull Request #${{github.event.number}}"
+          name: "Test Results"
           path: build
 
 #      - uses: actions/upload-artifact@v2

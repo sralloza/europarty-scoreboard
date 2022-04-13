@@ -16,6 +16,11 @@ public class EuropartyE2ETests {
     private ScoreWizService googleFormService;
     private ScoreWizService localService;
 
+    @AfterEach
+    public void tearDown() {
+        localService.deleteAllScoreboards();
+    }
+
     @BeforeEach
     public void setUp() {
         Injector googleFormInjector = Guice.createInjector(new GoogleFormModule());
@@ -24,11 +29,6 @@ public class EuropartyE2ETests {
         googleFormService = googleFormInjector.getInstance(ScoreWizService.class);
         localService = localInjector.getInstance(ScoreWizService.class);
 
-        localService.deleteAllScoreboards();
-    }
-
-    @AfterEach
-    public void tearDown() {
         localService.deleteAllScoreboards();
     }
 
