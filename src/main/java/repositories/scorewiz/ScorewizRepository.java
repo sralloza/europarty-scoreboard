@@ -3,7 +3,7 @@ package repositories.scorewiz;
 import com.google.inject.Inject;
 import exceptions.CountryNotFoundException;
 import exceptions.JuryMappingNotFoundException;
-import exceptions.JuryNameNotFoundException;
+import exceptions.JuryNotFoundException;
 import exceptions.NoScoreboardFoundException;
 import models.Jury;
 import models.Scoreboard;
@@ -142,7 +142,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
             throw new RuntimeException("Jury is null");
         }
         String juryVoteURL = Optional.ofNullable(juryVoteURLMap.get(jury.getLocalName()))
-                .orElseThrow(() -> new JuryNameNotFoundException(jury, juryVoteURLMap));
+                .orElseThrow(() -> new JuryNotFoundException(jury, juryVoteURLMap));
 
         driver.get(juryVoteURL);
         waitPageLoads();

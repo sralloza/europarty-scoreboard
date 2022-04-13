@@ -1,7 +1,7 @@
 package validators;
 
 import exceptions.CountryNotFoundException;
-import exceptions.JuryNameNotFoundException;
+import exceptions.JuryNotFoundException;
 import models.Jury;
 import models.Vote;
 
@@ -15,7 +15,7 @@ public class VotesValidator {
                 throw new CountryNotFoundException(s, vote.getJuryName());
             }
             if (juries.stream().noneMatch(j -> j.getName().equals(vote.getJuryName()))) {
-                throw new JuryNameNotFoundException(vote.getJuryName());
+                throw new JuryNotFoundException(vote.getJuryName(), "validating votes");
             }
         }));
     }

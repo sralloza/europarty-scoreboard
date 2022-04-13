@@ -1,4 +1,4 @@
-package repositories;
+package repositories.participant;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import repositories.common.LocalCommonRepository;
@@ -7,9 +7,9 @@ import java.util.List;
 
 import static constants.EuropartyConstants.JsonFiles.PARTICIPANTS;
 
-public class ParticipantRepository extends LocalCommonRepository {
+public class LocalParticipantRepository extends LocalCommonRepository implements ParticipantRepository {
 
-    public ParticipantRepository() {
+    public LocalParticipantRepository() {
         super(PARTICIPANTS);
     }
 

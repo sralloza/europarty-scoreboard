@@ -12,12 +12,13 @@ import static config.Config.GS_TELEVOTE_ID;
 
 public class GoogleFormTelevoteRepository extends GoogleFormCommonRepository implements TelevoteRepository {
     private static final String SPREADSHEET_ID = GS_TELEVOTE_ID;
+    private static final String RANGE = "A:L";
 
     private final GSVoteMapper mapper;
 
     @Inject
     public GoogleFormTelevoteRepository(GSVoteMapper mapper) {
-        super(SPREADSHEET_ID);
+        super(SPREADSHEET_ID, RANGE);
         this.mapper = mapper;
     }
 

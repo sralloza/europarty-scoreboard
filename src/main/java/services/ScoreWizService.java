@@ -6,14 +6,13 @@ import models.Jury;
 import models.Scoreboard;
 import models.Televote;
 import models.Vote;
-import repositories.JuryRepository;
-import repositories.ParticipantRepository;
+import repositories.jury.JuryRepository;
+import repositories.participant.ParticipantRepository;
 import repositories.scorewiz.ScorewizRepository;
 import repositories.televote.TelevoteRepository;
 import repositories.vote.VoteRepository;
 import validators.GlobalValidator;
 
-import java.io.IOException;
 import java.util.List;
 
 public class ScoreWizService {
@@ -39,7 +38,7 @@ public class ScoreWizService {
         this.votesRepository = votesRepository;
     }
 
-    public void createScoreboard(String name) throws IOException {
+    public void createScoreboard(String name) {
         List<Jury> juries = juryRepository.getJuries();
         List<String> participants = participantRepository.getParticipants();
         validator.validateJuries(participants, juries);
@@ -63,11 +62,12 @@ public class ScoreWizService {
         scorewizRepository.logout();
     }
 
-    public void setJuryVotes() throws IOException {
+    public void setJuryVotes() {
         List<Vote> juryVotes = votesRepository.getJuryVotes();
+        List<Jury> juries = juryRepository.getJuries();
 
         List<String> requestedParticipants = participantRepository.getParticipants();
-        List<Jury> juries = juryRepository.getJuries();
+        validator.validateVotes(requestedParticipants, juries, juryVotes);
 
         validator.validateVotes(requestedParticipants, juries, juryVotes);
 
