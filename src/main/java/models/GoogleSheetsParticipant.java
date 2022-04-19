@@ -22,7 +22,6 @@ public class GoogleSheetsParticipant {
         }
 
         countryName = spreadsheetRow.get(0);
-        System.out.println(spreadsheetRow);
         if (spreadsheetRow.size() > 1) {
             juryLocalName = spreadsheetRow.get(1);
             juryRealName = spreadsheetRow.get(2);

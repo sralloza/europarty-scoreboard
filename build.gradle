@@ -2,15 +2,15 @@ plugins {
     id 'application'
     id 'groovy'
     id 'java'
-    id "io.freefair.lombok" version "6.4.1"
+    id 'io.freefair.lombok' version '6.4.1'
 }
 
 test {
     testLogging {
-        events "passed", "skipped", "failed"
+        events 'passed', 'skipped', 'failed'
 
         showExceptions true
-        exceptionFormat "full"
+        exceptionFormat 'full'
         showCauses true
         showStackTraces true
 
@@ -19,7 +19,7 @@ test {
 }
 
 ext.getTestVariable = { asked ->
-    if (!file("src/main/resources/test.env").exists()) {
+    if (!file('src/main/resources/test.env').exists()) {
         return null
     }
     file('src/main/resources/test.env').eachLine { line ->
@@ -32,10 +32,10 @@ ext.getTestVariable = { asked ->
 }
 
 if (project.getTestVariable('SW_USERNAME') != null) {
-    tasks.test.environment("SW_USERNAME", project.getTestVariable('SW_USERNAME'))
+    tasks.test.environment('SW_USERNAME', project.getTestVariable('SW_USERNAME'))
 }
 if (project.getTestVariable('SW_PASSWORD') != null) {
-    tasks.test.environment("SW_PASSWORD", project.getTestVariable("SW_PASSWORD"))
+    tasks.test.environment('SW_PASSWORD', project.getTestVariable('SW_PASSWORD'))
 }
 
 group 'es.sralloza'
@@ -60,14 +60,13 @@ dependencies {
     implementation 'org.seleniumhq.selenium:selenium-api:4.1.3'
     implementation 'org.seleniumhq.selenium:selenium-support:4.1.3'
     implementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.1.3'
-    implementation "com.google.guava:guava:31.1-jre"
+    implementation 'com.google.guava:guava:31.1-jre'
 
-    implementation "org.projectlombok:lombok:1.18.22"
+    implementation 'org.projectlombok:lombok:1.18.22'
     implementation 'commons-io:commons-io:2.11.0'
     implementation 'com.google.inject:guice:5.1.0'
 
-    implementation "com.fasterxml.jackson.core:jackson-databind:2.13.2.2"
-    implementation 'com.google.http-client:google-http-client-jackson2:1.41.5'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2.2'
 
     implementation 'com.google.api-client:google-api-client:1.33.4'
     implementation 'com.google.apis:google-api-services-sheets:v4-rev20220322-1.32.1'
@@ -82,7 +81,7 @@ task fatJar(type: Jar) {
     exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
 
     manifest {
-        attributes 'Main-Class': "${mainClassName}"
+        attributes 'Main-Class': mainClassName
     }
 
     from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }

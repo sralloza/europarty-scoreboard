@@ -12,14 +12,17 @@ public class GlobalValidator {
     private final JuriesValidator juriesValidator;
     private final VotesValidator votesValidator;
     private final TelevotesValidator televotesValidator;
+    private final ScoreboardNameValidator scoreboardNameValidator;
 
     @Inject
     public GlobalValidator(JuriesValidator juriesValidator,
                            VotesValidator votesValidator,
-                           TelevotesValidator televotesValidator) {
+                           TelevotesValidator televotesValidator,
+                           ScoreboardNameValidator scoreboardNameValidator) {
         this.juriesValidator = juriesValidator;
         this.votesValidator = votesValidator;
         this.televotesValidator = televotesValidator;
+        this.scoreboardNameValidator = scoreboardNameValidator;
     }
 
     public void validateJuries(List<Participant> savedParticipants, List<Jury> juries) {
@@ -32,5 +35,9 @@ public class GlobalValidator {
 
     public void validateTelevotes(List<Participant> requestedParticipants, List<Televote> televotes) {
         televotesValidator.validate(requestedParticipants, televotes);
+    }
+
+    public void validateScoreboardName(String name) {
+        scoreboardNameValidator.validate(name);
     }
 }

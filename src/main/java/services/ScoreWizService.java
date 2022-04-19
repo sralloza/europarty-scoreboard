@@ -40,6 +40,8 @@ public class ScoreWizService {
     }
 
     public void createScoreboard(String name) {
+        validator.validateScoreboardName(name);
+
         List<Jury> juries = juryRepository.getJuries();
         List<Participant> participants = participantRepository.getParticipants();
         validator.validateJuries(participants, juries);

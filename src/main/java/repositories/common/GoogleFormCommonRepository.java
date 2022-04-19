@@ -3,7 +3,7 @@ package repositories.common;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.ValueRange;
@@ -43,7 +43,7 @@ public class GoogleFormCommonRepository {
 
         var creds = new GoogleCredential.Builder()
                 .setTransport(GoogleNetHttpTransport.newTrustedTransport())
-                .setJsonFactory(JacksonFactory.getDefaultInstance())
+                .setJsonFactory(GsonFactory.getDefaultInstance())
                 .setServiceAccountId(GOOGLE_CREDS_EMAIL)
                 .setServiceAccountScopes(List.of(SheetsScopes.SPREADSHEETS))
                 .setServiceAccountPrivateKeyFromPemFile(keyFile)
@@ -58,7 +58,7 @@ public class GoogleFormCommonRepository {
     private static Sheets getSheetsService() throws Exception {
         Credential credential = authorize();
         return new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(),
-                JacksonFactory.getDefaultInstance(), credential)
+                GsonFactory.getDefaultInstance(), credential)
                 .setApplicationName(APPLICATION_NAME)
                 .build();
     }
