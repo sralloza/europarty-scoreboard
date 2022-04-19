@@ -4,24 +4,28 @@ import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.util.PemReader;
+import com.google.api.client.util.SecurityUtils;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import com.google.inject.Inject;
 import config.ConfigRepository;
-import exceptions.FileDeleteException;
+import exceptions.InvalidPrivateKeyException;
 import exceptions.NoValidVotesFoundException;
 import lombok.SneakyThrows;
 import models.GoogleSheetsParticipant;
 import models.GoogleSheetsVote;
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.StringReader;
+import java.security.PrivateKey;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 
 public class GoogleFormCommonRepository {
     private final String spreadsheetId;
@@ -35,25 +39,30 @@ public class GoogleFormCommonRepository {
         this.configRepository = configRepository;
     }
 
+    private PrivateKey getKey() throws Exception {
+        String privateKey = configRepository.getString("googleSheets.credentials.privateKey");
+        if (privateKey.contains("\\n")) {
+            privateKey = privateKey.replace("\\n", "\n");
+        }
+
+        StringReader stream = new StringReader(privateKey);
+        PemReader.Section parsedPrivateKey = PemReader.readFirstSectionAndClose(stream, "PRIVATE KEY");
+        byte[] bytes = Optional.ofNullable(parsedPrivateKey)
+                .orElseThrow(InvalidPrivateKeyException::new)
+                .getBase64DecodedBytes();
+        return SecurityUtils.getRsaKeyFactory().generatePrivate(new PKCS8EncodedKeySpec(bytes));
+    }
+
     private Credential authorize() throws Exception {
-        InputStream keyStream = ConfigRepository.getResource("key.pem");
+        PrivateKey key = getKey();
 
-        File keyFile = File.createTempFile("key", ".p12").getAbsoluteFile();
-        FileUtils.copyInputStreamToFile(keyStream, keyFile);
-        System.out.println("Key file created: " + keyFile);
-
-        var creds = new GoogleCredential.Builder()
+        return new GoogleCredential.Builder()
                 .setTransport(GoogleNetHttpTransport.newTrustedTransport())
                 .setJsonFactory(GsonFactory.getDefaultInstance())
                 .setServiceAccountId(configRepository.getString("googleSheets.credentials.email"))
                 .setServiceAccountScopes(List.of(SheetsScopes.SPREADSHEETS))
-                .setServiceAccountPrivateKeyFromPemFile(keyFile)
+                .setServiceAccountPrivateKey(key)
                 .build();
-        if (!keyFile.delete()) {
-            throw new FileDeleteException(keyFile);
-        }
-        System.out.println("Key deleted");
-        return creds;
     }
 
     private Sheets getSheetsService() throws Exception {

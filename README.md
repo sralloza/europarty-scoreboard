@@ -8,6 +8,7 @@ Required:
 
 - **SW_USERNAME**: Your scorewiz username
 - **SW_PASSWORD**: Your scorewiz password
+- **GOOGLE_CREDS_PRIVATE_KEY**: The private key of your Google credentials. Endlines characters must be replaced with `"\\n"`.
 - **GOOGLE_CREDS_EMAIL**: Your Google credentials email.
 - **GS_VOTE_ID**: The Google Sheet ID of the votes sheet.
 - **GS_TELEVOTE_ID**: The Google Sheet ID of the televotes sheet.
