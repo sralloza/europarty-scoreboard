@@ -7,7 +7,8 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.ValueRange;
-import config.Config;
+import com.google.inject.Inject;
+import config.ConfigRepository;
 import exceptions.FileDeleteException;
 import exceptions.NoValidVotesFoundException;
 import lombok.SneakyThrows;
@@ -22,20 +23,20 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static config.Config.APPLICATION_NAME;
-import static config.Config.GOOGLE_CREDS_EMAIL;
-
 public class GoogleFormCommonRepository {
     private final String spreadsheetId;
     private final String spreadsheetRange;
+    private final ConfigRepository configRepository;
 
-    public GoogleFormCommonRepository(String spreadsheetId, String spreadsheetRange) {
-        this.spreadsheetId = spreadsheetId;
+    @Inject
+    public GoogleFormCommonRepository(String spreadsheetConf, String spreadsheetRange, ConfigRepository configRepository) {
+        this.spreadsheetId = configRepository.getString(spreadsheetConf);
         this.spreadsheetRange = spreadsheetRange;
+        this.configRepository = configRepository;
     }
 
-    private static Credential authorize() throws Exception {
-        InputStream keyStream = Config.getResource("key.pem");
+    private Credential authorize() throws Exception {
+        InputStream keyStream = ConfigRepository.getResource("key.pem");
 
         File keyFile = File.createTempFile("key", ".p12").getAbsoluteFile();
         FileUtils.copyInputStreamToFile(keyStream, keyFile);
@@ -44,7 +45,7 @@ public class GoogleFormCommonRepository {
         var creds = new GoogleCredential.Builder()
                 .setTransport(GoogleNetHttpTransport.newTrustedTransport())
                 .setJsonFactory(GsonFactory.getDefaultInstance())
-                .setServiceAccountId(GOOGLE_CREDS_EMAIL)
+                .setServiceAccountId(configRepository.getString("googleSheets.credentials.email"))
                 .setServiceAccountScopes(List.of(SheetsScopes.SPREADSHEETS))
                 .setServiceAccountPrivateKeyFromPemFile(keyFile)
                 .build();
@@ -55,11 +56,11 @@ public class GoogleFormCommonRepository {
         return creds;
     }
 
-    private static Sheets getSheetsService() throws Exception {
+    private Sheets getSheetsService() throws Exception {
         Credential credential = authorize();
         return new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(),
                 GsonFactory.getDefaultInstance(), credential)
-                .setApplicationName(APPLICATION_NAME)
+                .setApplicationName(configRepository.getString("scorewiz.scoreboard.name"))
                 .build();
     }
 

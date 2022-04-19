@@ -1,4 +1,6 @@
 import com.google.inject.AbstractModule;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import repositories.jury.JuryRepository;
 import repositories.jury.LocalJuryRepository;
 import repositories.participant.LocalParticipantRepository;
@@ -15,5 +17,6 @@ public class LocalModule extends AbstractModule {
         bind(ParticipantRepository.class).to(LocalParticipantRepository.class);
         bind(TelevoteRepository.class).to(LocalTelevoteRepository.class);
         bind(VoteRepository.class).to(LocalVoteRepository.class);
+        bind(Config.class).toInstance(ConfigFactory.load());
     }
 }
