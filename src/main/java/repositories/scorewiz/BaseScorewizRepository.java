@@ -87,7 +87,7 @@ public class BaseScorewizRepository {
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
-        if (!configRepository.getBoolean("general.headless")) {
+        if (configRepository.getBoolean("general.headless")) {
             options.addArguments("--headless");
         }
 
