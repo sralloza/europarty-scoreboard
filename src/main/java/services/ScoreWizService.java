@@ -1,6 +1,7 @@
 package services;
 
 import com.google.inject.Inject;
+import config.ConfigRepository;
 import exceptions.ParticipantsValidationEception;
 import models.Jury;
 import models.Participant;
@@ -14,6 +15,7 @@ import repositories.televote.TelevoteRepository;
 import repositories.vote.VoteRepository;
 import validators.GlobalValidator;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ScoreWizService {
@@ -23,6 +25,7 @@ public class ScoreWizService {
     private final ScorewizRepository scorewizRepository;
     private final TelevoteRepository televoteRepository;
     private final VoteRepository votesRepository;
+    private final ConfigRepository configRepository;
 
     @Inject
     public ScoreWizService(GlobalValidator validator,
@@ -30,16 +33,26 @@ public class ScoreWizService {
                            ParticipantRepository participantRepository,
                            ScorewizRepository scorewizRepository,
                            TelevoteRepository televoteRepository,
-                           VoteRepository votesRepository) {
+                           VoteRepository votesRepository,
+                           ConfigRepository configRepository) {
         this.validator = validator;
         this.juryRepository = juryRepository;
         this.participantRepository = participantRepository;
         this.scorewizRepository = scorewizRepository;
         this.televoteRepository = televoteRepository;
         this.votesRepository = votesRepository;
+        this.configRepository = configRepository;
+    }
+
+    public void createScoreboard() {
+        String scoreboardName = configRepository.getString("scorewiz.scoreboard.name");
+        createScoreboard(scoreboardName);
     }
 
     public void createScoreboard(String name) {
+        if (configRepository.getBoolean("general.test")) {
+            name += " - Test " + LocalDateTime.now();
+        }
         validator.validateScoreboardName(name);
 
         List<Jury> juries = juryRepository.getJuries();

@@ -1,6 +1,7 @@
 package repositories.scorewiz;
 
 import com.google.inject.Inject;
+import config.ConfigRepository;
 import exceptions.CountryNotFoundException;
 import exceptions.JuryMappingNotFoundException;
 import exceptions.JuryNotFoundException;
@@ -36,8 +37,8 @@ import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
 
 public class ScorewizRepository extends BaseScorewizRepository {
     @Inject
-    public ScorewizRepository(ScorewizUtils scorewizUtils) {
-        super(scorewizUtils);
+    public ScorewizRepository(ScorewizUtils scorewizUtils, ConfigRepository configRepository) {
+        super(scorewizUtils, configRepository);
     }
 
     public void createScoreboard(String name) {
@@ -185,7 +186,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
 
     public void openFirstScoreboard() {
         selectedScoreboard = getScoreboards().stream().findFirst().orElseThrow(NoScoreboardFoundException::new);
-        driver.get(getScoreboardUrl());
+        driver.get(getScoreboardURL());
     }
 
     public List<Scoreboard> getScoreboards() {

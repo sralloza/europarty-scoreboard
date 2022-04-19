@@ -28,12 +28,6 @@ jobs:
       - name: Move chromedriver to resource folder
         run: cp $(which chromedriver) src/main/resources/chromedriver
 
-      - name: Provision file key.pem
-        uses: jsdaniell/create-json@1.1.2
-        with:
-          name: "src/main/resources/key.pem"
-          json: ${{ secrets.GOOGLE_PRIVATE_KEY }}
-
       - name: Provision file participants.json
         uses: jsdaniell/create-json@1.1.2
         with:
@@ -181,6 +175,7 @@ jobs:
           SW_BASE_URL: https://scorewiz.eu
           SW_SCOREBOARD_NAME: CI-TEST
           GOOGLE_CREDS_EMAIL: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_EMAIL }}
+          GOOGLE_CREDS_PRIVATE_KEY: ${{ secrets.GOOGLE_PRIVATE_KEY }}
           GS_VOTE_ID: ${{ secrets.GOOGLE_SPREADSHEET_VOTE_ID }}
           GS_TELEVOTE_ID: ${{ secrets.GOOGLE_SPREADSHEET_TELEVOTE_ID }}
           GS_PARTICIPANTS_ID: ${{ secrets.GOOGLE_SPREADSHEET_PARTICIPANTS_ID }}

@@ -1,7 +1,6 @@
 package repositories.scorewiz;
 
-import com.google.inject.Inject;
-import config.Config;
+import config.ConfigRepository;
 import exceptions.LoginException;
 import exceptions.SelectorNotFoundException;
 import lombok.SneakyThrows;
@@ -25,13 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static config.Config.DEBUG;
-import static config.Config.SW_BASE_URL;
-import static config.Config.SW_PASSWORD;
-import static config.Config.SW_USERNAME;
 import static constants.ScorewizConstants.LOCAL_WEBDRIVER_PATH;
-import static constants.ScorewizConstants.SW_ACTION_URL_TEMPLATE;
-import static constants.ScorewizConstants.SW_MENU_URL;
 import static constants.ScorewizConstants.WEBDRIVER_NAME;
 import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
 
@@ -41,11 +34,24 @@ public class BaseScorewizRepository {
     protected Scoreboard selectedScoreboard;
     private File extractedDriverFile;
 
-    protected final ScorewizUtils scorewizUtils;
+    protected String baseURL;
 
-    @Inject
-    public BaseScorewizRepository(ScorewizUtils scorewizUtils) {
+    protected final ScorewizUtils scorewizUtils;
+    protected final ConfigRepository configRepository;
+
+    public BaseScorewizRepository(ScorewizUtils scorewizUtils, ConfigRepository configRepository) {
         this.scorewizUtils = scorewizUtils;
+        this.configRepository = configRepository;
+
+        baseURL = configRepository.getString("scorewiz.web.baseURL");
+    }
+
+    protected String getMenuURL() {
+        return baseURL + "/my/scoreboards";
+    }
+
+    protected String getActionURLTemplate() {
+        return baseURL + "/%s/%s/%s";
     }
 
     @SneakyThrows
@@ -60,7 +66,7 @@ public class BaseScorewizRepository {
         if (!extractedDriverFile.setExecutable(true)) {
             System.err.println("Failed to set executable flag on chromedriver: " + extractedDriverFile);
         }
-        FileUtils.copyInputStreamToFile(Config.getResource(WEBDRIVER_NAME), extractedDriverFile);
+        FileUtils.copyInputStreamToFile(ConfigRepository.getResource(WEBDRIVER_NAME), extractedDriverFile);
     }
 
     private void removeWebdriverFile() {
@@ -81,7 +87,7 @@ public class BaseScorewizRepository {
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
-        if (!DEBUG) {
+        if (configRepository.getBoolean("general.headless")) {
             options.addArguments("--headless");
         }
 
@@ -100,37 +106,39 @@ public class BaseScorewizRepository {
     }
 
     private String getActionURL(String action, Scoreboard scoreboard) {
-        return String.format(SW_ACTION_URL_TEMPLATE, action, scoreboard.getSid(), scoreboard.getPass());
+        return String.format(getActionURLTemplate(), action, scoreboard.getSid(), scoreboard.getPass());
     }
 
-    protected String getScoreboardUrl() {
+    protected String getScoreboardURL() {
         if (selectedScoreboard == null) {
             throw new IllegalStateException("No scoreboard selected");
         }
-        return getScoreboardUrl(selectedScoreboard);
+        return getScoreboardURL(selectedScoreboard);
     }
 
-    protected String getScoreboardUrl(Scoreboard scoreboard) {
+    protected String getScoreboardURL(Scoreboard scoreboard) {
         return getActionURL("menu", scoreboard);
     }
 
     protected String getLoginURL() {
-        return SW_BASE_URL + "/login";
+        return baseURL + "/login";
     }
 
     protected String getLogoutURL() {
-        return SW_BASE_URL + "/logout";
+        return baseURL + "/logout";
     }
 
     protected String getNewURL() {
-        return SW_BASE_URL + "/new";
+        return baseURL + "/new";
     }
 
     public void login() {
         provisionDriver();
+        var username = configRepository.getString("scorewiz.credentials.username");
+        var password = configRepository.getString("scorewiz.credentials.password");
         driver.get(getLoginURL());
-        driver.findElement(By.name("email")).sendKeys(SW_USERNAME);
-        driver.findElement(By.name("pass")).sendKeys(SW_PASSWORD);
+        driver.findElement(By.name("email")).sendKeys(username);
+        driver.findElement(By.name("pass")).sendKeys(password);
 
         submit(TAG_INPUT_TYPE_SUBMIT);
 
@@ -139,12 +147,15 @@ public class BaseScorewizRepository {
 
     private void ensureLoginCorrect() {
         String url = driver.getCurrentUrl();
+        var username = configRepository.getString("scorewiz.credentials.username");
+        var password = configRepository.getString("scorewiz.credentials.password");
 
         try {
             WebElement error = driver.findElement(By.id("error"));
-            throw new LoginException(driver.getCurrentUrl(), error.getText(), SW_USERNAME, SW_PASSWORD);
+            // TODO: a exception should not log username and password
+            throw new LoginException(driver.getCurrentUrl(), error.getText(), username, password);
         } catch (NoSuchElementException e) {
-            if (!url.equals(SW_MENU_URL)) {
+            if (!url.equals(getMenuURL())) {
                 throw new LoginException(driver.getCurrentUrl());
             }
         }
@@ -223,7 +234,7 @@ public class BaseScorewizRepository {
     }
 
     protected List<WebElement> findMainMenuButtons(MainMenuButtonType buttonType) {
-        driver.get(SW_MENU_URL);
+        driver.get(getMenuURL());
         waitPageLoads();
         return findMainMenuButtons(buttonType, driver.findElement(By.className("node")));
     }
