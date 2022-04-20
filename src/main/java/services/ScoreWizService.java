@@ -6,6 +6,7 @@ import exceptions.ParticipantsValidationEception;
 import models.Jury;
 import models.Participant;
 import models.Scoreboard;
+import models.SimpleJury;
 import models.Televote;
 import models.Vote;
 import repositories.jury.JuryRepository;
@@ -55,7 +56,7 @@ public class ScoreWizService {
         }
         validator.validateScoreboardName(name);
 
-        List<Jury> juries = juryRepository.getJuries();
+        List<Jury> juries = juryRepository.getJuriesSorted();
         List<Participant> participants = participantRepository.getParticipants();
         validator.validateJuries(participants, juries);
 
@@ -80,11 +81,9 @@ public class ScoreWizService {
 
     public void setJuryVotes() {
         List<Vote> juryVotes = votesRepository.getJuryVotes();
-        List<Jury> juries = juryRepository.getJuries();
+        List<Jury> juries = juryRepository.getJuriesSorted();
 
         List<Participant> requestedParticipants = participantRepository.getParticipants();
-        validator.validateVotes(requestedParticipants, juries, juryVotes);
-
         validator.validateVotes(requestedParticipants, juries, juryVotes);
 
         List<Televote> televotes = televoteRepository.getTelevotes();
@@ -123,5 +122,12 @@ public class ScoreWizService {
         List<Scoreboard> scoreboards = scorewizRepository.getScoreboards();
         scorewizRepository.logout();
         return scoreboards;
+    }
+
+    public List<SimpleJury> getJuryList() {
+        scorewizRepository.login();
+        List<SimpleJury> simpleJuries = scorewizRepository.getJuries();
+        scorewizRepository.logout();
+        return simpleJuries;
     }
 }

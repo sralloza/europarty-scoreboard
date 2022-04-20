@@ -1,7 +1,6 @@
 package repositories.jury;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import exceptions.JuryNotFoundException;
 import models.Jury;
 import repositories.common.LocalCommonRepository;
 
