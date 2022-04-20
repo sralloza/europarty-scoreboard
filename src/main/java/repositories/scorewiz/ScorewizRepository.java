@@ -9,6 +9,7 @@ import exceptions.NoScoreboardFoundException;
 import models.Jury;
 import models.Participant;
 import models.Scoreboard;
+import models.SimpleJury;
 import models.Televote;
 import models.Vote;
 import org.openqa.selenium.Alert;
@@ -81,6 +82,25 @@ public class ScorewizRepository extends BaseScorewizRepository {
         submit(ID_NAMES_SUBMIT);
     }
 
+    public List<SimpleJury> getJuries() {
+        String url = getSetOptionsURL("juries");
+        driver.get(url);
+        int nParticipants = driver.findElements(By.className("select")).size();
+
+        return IntStream.range(0, nParticipants)
+                .mapToObj(i -> getSimpleJury(i + 1))
+                .takeWhile(jury -> jury.getCountryName() != null && !jury.getCountryName().isBlank())
+                .takeWhile(jury -> jury.getJuryLocalName() != null && !jury.getJuryLocalName().isBlank())
+                .collect(Collectors.toList());
+    }
+
+    private SimpleJury getSimpleJury(int position) {
+        String countryName = driver.findElement(By.id("flag-select-" + position)).getAttribute("value");
+        String juryLocalName = driver.findElement(By.id("name" + position)).getAttribute("value");
+        return new SimpleJury()
+                .setCountryName(countryName)
+                .setJuryLocalName(juryLocalName);
+    }
 
     public List<Participant> getParticipants() {
         String participantsURL = getSetOptionsURL("participants");

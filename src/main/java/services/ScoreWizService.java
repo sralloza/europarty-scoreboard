@@ -6,6 +6,7 @@ import exceptions.ParticipantsValidationEception;
 import models.Jury;
 import models.Participant;
 import models.Scoreboard;
+import models.SimpleJury;
 import models.Televote;
 import models.Vote;
 import repositories.jury.JuryRepository;
@@ -121,5 +122,12 @@ public class ScoreWizService {
         List<Scoreboard> scoreboards = scorewizRepository.getScoreboards();
         scorewizRepository.logout();
         return scoreboards;
+    }
+
+    public List<SimpleJury> getJuryList() {
+        scorewizRepository.login();
+        List<SimpleJury> simpleJuries = scorewizRepository.getJuries();
+        scorewizRepository.logout();
+        return simpleJuries;
     }
 }
