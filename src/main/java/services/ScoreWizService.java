@@ -2,7 +2,6 @@ package services;
 
 import com.google.inject.Inject;
 import config.ConfigRepository;
-import exceptions.ParticipantsValidationEception;
 import models.Jury;
 import models.Participant;
 import models.Scoreboard;
@@ -78,32 +77,6 @@ public class ScoreWizService {
 
         scorewizRepository.logout();
     }
-
-    public void setJuryVotes() {
-        List<Vote> juryVotes = votesRepository.getJuryVotes();
-        List<Jury> juries = juryRepository.getJuriesSorted();
-
-        List<Participant> requestedParticipants = participantRepository.getParticipants();
-        validator.validateVotes(requestedParticipants, juries, juryVotes);
-
-        List<Televote> televotes = televoteRepository.getTelevotes();
-        validator.validateTelevotes(requestedParticipants, televotes);
-
-        scorewizRepository.login();
-        scorewizRepository.openFirstScoreboard();
-        scorewizRepository.processScorewizVars();
-        scorewizRepository.genJuryMapping();
-
-        List<Participant> savedParticipants = scorewizRepository.getParticipants();
-        if (!savedParticipants.equals(requestedParticipants)) {
-            throw new ParticipantsValidationEception(requestedParticipants, savedParticipants);
-        }
-
-        registerAllJuriesVotes(juryVotes);
-        scorewizRepository.setTelevotes(televotes);
-        scorewizRepository.logout();
-    }
-
     private void registerAllJuriesVotes(List<Vote> juryVotes) {
         for (Vote vote : juryVotes) {
             Jury jury = juryRepository.getByName(vote.getJuryName());

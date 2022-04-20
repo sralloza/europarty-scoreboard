@@ -4,7 +4,7 @@ import services.ScoreWizService;
 
 public class DeleteAllScoreboards {
     public static void main(String[] args) {
-        Injector injector = Guice.createInjector(new LocalModule());
+        Injector injector = Guice.createInjector(new GoogleFormModule());
         ScoreWizService scoreWizService = injector.getInstance(ScoreWizService.class);
 
         scoreWizService.deleteAllScoreboards();
