@@ -17,42 +17,27 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SimpleJuryList extends ArrayList<SimpleJury> {
-
 }
 
 public class EuropartyE2ETests {
     private ScoreWizService googleFormService;
-    private ScoreWizService localService;
 
     @AfterEach
     public void tearDown() {
-        localService.deleteAllScoreboards();
+        googleFormService.deleteAllScoreboards();
     }
 
     @BeforeEach
     public void setUp() {
         Injector googleFormInjector = Guice.createInjector(new GoogleFormModule());
-        Injector localInjector = Guice.createInjector(new LocalModule());
 
         googleFormService = googleFormInjector.getInstance(ScoreWizService.class);
-        localService = localInjector.getInstance(ScoreWizService.class);
 
-        localService.deleteAllScoreboards();
+        googleFormService.deleteAllScoreboards();
     }
 
     public static Integer[] getTimes() {
         return new Integer[]{0, 1, 2, 5};
-    }
-
-    @ParameterizedTest(name = "shouldCreateScoreboardWithLocalData (repeat={0})")
-    @MethodSource("getTimes")
-    public void shouldCreateScoreboardWithLocalData(Integer times) {
-        for (int i = 0; i < times; i++) {
-            localService.createScoreboard("test-" + i);
-        }
-
-        List<Scoreboard> scoreboards = localService.getScoreboards();
-        assertEquals(times, scoreboards.size());
     }
 
     @ParameterizedTest(name = "shouldCreateScoreboardWithGoogleFormData (repeat={0})")
