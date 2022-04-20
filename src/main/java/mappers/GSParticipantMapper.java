@@ -12,7 +12,8 @@ public class GSParticipantMapper {
         return new Jury()
                 .setCountry(googleSheetsParticipant.getCountryName())
                 .setLocalName(googleSheetsParticipant.getJuryLocalName())
-                .setName(googleSheetsParticipant.getJuryRealName());
+                .setName(googleSheetsParticipant.getJuryRealName())
+                .setVoteOrder(googleSheetsParticipant.getVotingOrder());
     }
 
     public List<Jury> buildJuries(List<GoogleSheetsParticipant> googleSheetsParticipants) {

@@ -55,7 +55,7 @@ public class ScoreWizService {
         }
         validator.validateScoreboardName(name);
 
-        List<Jury> juries = juryRepository.getJuries();
+        List<Jury> juries = juryRepository.getJuriesSorted();
         List<Participant> participants = participantRepository.getParticipants();
         validator.validateJuries(participants, juries);
 
@@ -80,11 +80,9 @@ public class ScoreWizService {
 
     public void setJuryVotes() {
         List<Vote> juryVotes = votesRepository.getJuryVotes();
-        List<Jury> juries = juryRepository.getJuries();
+        List<Jury> juries = juryRepository.getJuriesSorted();
 
         List<Participant> requestedParticipants = participantRepository.getParticipants();
-        validator.validateVotes(requestedParticipants, juries, juryVotes);
-
         validator.validateVotes(requestedParticipants, juries, juryVotes);
 
         List<Televote> televotes = televoteRepository.getTelevotes();

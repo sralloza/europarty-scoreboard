@@ -9,4 +9,5 @@ public class Jury {
     private String country;
     private String localName;
     private String name;
+    private int voteOrder;
 }
