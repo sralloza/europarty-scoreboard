@@ -5,7 +5,7 @@ import config.ConfigRepository;
 import exceptions.CountryNotFoundException;
 import exceptions.JuryMappingNotFoundException;
 import exceptions.JuryNotFoundException;
-import exceptions.NoScoreboardFoundException;
+import lombok.extern.slf4j.Slf4j;
 import models.Jury;
 import models.Participant;
 import models.Scoreboard;
@@ -30,12 +30,13 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static constants.EuropartyConstants.VOTE_POINTS_LIST;
-import static repositories.scorewiz.MainMenuButtonType.DELETE;
-import static repositories.scorewiz.MainMenuButtonType.EDIT;
-import static repositories.scorewiz.SubmitType.ID_NAMES_SUBMIT;
-import static repositories.scorewiz.SubmitType.ID_VOTES_SUBMIT;
-import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
+import static models.MainMenuButtonType.DELETE;
+import static models.MainMenuButtonType.EDIT;
+import static models.SubmitType.ID_NAMES_SUBMIT;
+import static models.SubmitType.ID_VOTES_SUBMIT;
+import static models.SubmitType.TAG_INPUT_TYPE_SUBMIT;
 
+@Slf4j
 public class ScorewizRepository extends BaseScorewizRepository {
     @Inject
     public ScorewizRepository(ScorewizUtils scorewizUtils, ConfigRepository configRepository) {
@@ -43,6 +44,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
     }
 
     public void createScoreboard(String name) {
+        log.debug("Creating scoreboard {}", name);
         driver.get(getNewURL());
 
         WebElement titleInput = driver.findElement(By.id("title"));
@@ -50,20 +52,37 @@ public class ScorewizRepository extends BaseScorewizRepository {
         titleInput.sendKeys(name);
 
         submit(TAG_INPUT_TYPE_SUBMIT);
+        log.debug("Scoreboard {} created", name);
 
         processScorewizVars();
     }
 
     public void processScorewizVars() {
+        log.debug("Processing scorewiz vars");
         if (Stream.of(selectedScoreboard, juryVoteURLMap).filter(Objects::nonNull).count() == 2) {
-            System.out.println("Vars already set");
+            log.debug("Vars already set");
             return;
         }
 
         selectedScoreboard = scorewizUtils.getScoreboardFromURL(driver.getCurrentUrl());
     }
 
+    public List<SimpleJury> getJuries() {
+        log.debug("Getting juries");
+        String url = getSetOptionsURL("juries");
+        driver.get(url);
+        int nParticipants = driver.findElements(By.className("select")).size();
+
+        log.debug("Found {} juries, processing them", nParticipants);
+        return IntStream.range(0, nParticipants)
+                .mapToObj(i -> getSimpleJury(i + 1))
+                .takeWhile(jury -> jury.getCountryName() != null && !jury.getCountryName().isBlank())
+                .takeWhile(jury -> jury.getJuryLocalName() != null && !jury.getJuryLocalName().isBlank())
+                .collect(Collectors.toList());
+    }
+
     public void setJuries(List<Jury> juries) {
+        log.debug("Setting {} juries", juries.size());
         String juriesURL = getSetOptionsURL("juries");
         driver.get(juriesURL);
         waitPageLoads();
@@ -72,6 +91,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
 
         IntStream.range(0, juries.size()).forEach(i -> {
                     Jury jury = juries.get(i);
+                    log.debug("Setting jury {}", jury);
                     setCountryInFormWithAutocomplete(jury.getCountry(), i + 1);
 
                     WebElement juryInput = driver.findElement(By.id("name" + (i + 1)));
@@ -80,18 +100,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
                 }
         );
         submit(ID_NAMES_SUBMIT);
-    }
-
-    public List<SimpleJury> getJuries() {
-        String url = getSetOptionsURL("juries");
-        driver.get(url);
-        int nParticipants = driver.findElements(By.className("select")).size();
-
-        return IntStream.range(0, nParticipants)
-                .mapToObj(i -> getSimpleJury(i + 1))
-                .takeWhile(jury -> jury.getCountryName() != null && !jury.getCountryName().isBlank())
-                .takeWhile(jury -> jury.getJuryLocalName() != null && !jury.getJuryLocalName().isBlank())
-                .collect(Collectors.toList());
+        log.debug("Juries set");
     }
 
     private SimpleJury getSimpleJury(int position) {
@@ -102,24 +111,8 @@ public class ScorewizRepository extends BaseScorewizRepository {
                 .setJuryLocalName(juryLocalName);
     }
 
-    public List<Participant> getParticipants() {
-        String participantsURL = getSetOptionsURL("participants");
-        driver.get(participantsURL);
-        waitPageLoads();
-
-        int nParticipants = driver.findElements(By.className("select")).size();
-
-        return IntStream.range(1, nParticipants + 1).mapToObj(i -> {
-                            WebElement input = driver.findElement(By.id("flag-select-" + i));
-                            return input.getAttribute("value");
-                        }
-                )
-                .takeWhile(s -> !s.isEmpty())
-                .map(p -> new Participant().setName(p))
-                .collect(Collectors.toList());
-    }
-
     public void setParticipants(List<Participant> participants) {
+        log.debug("Setting {} participants", participants.size());
         String participantsURL = getSetOptionsURL("participants");
         driver.get(participantsURL);
         waitPageLoads();
@@ -132,9 +125,11 @@ public class ScorewizRepository extends BaseScorewizRepository {
         );
 
         submit(ID_NAMES_SUBMIT);
+        log.debug("Participants set");
     }
 
     public void genJuryMapping() {
+        log.debug("Generating jury mapping");
         juryVoteURLMap = new HashMap<>();
 
         driver.get(getActionURL("votesOverview"));
@@ -149,15 +144,19 @@ public class ScorewizRepository extends BaseScorewizRepository {
 
             String juryName = filteredCols.get(0).getText();
             String juryVoteURL = filteredCols.get(1).findElement(By.cssSelector("a")).getAttribute("href");
+            log.debug("Adding jury {} to jury mapping with url {}", juryName, juryVoteURL);
             juryVoteURLMap.put(juryName, juryVoteURL);
         }
 
         if (juryVoteURLMap.isEmpty()) {
             throw new JuryMappingNotFoundException();
         }
+
+        log.debug("Jury mapping generated");
     }
 
     public void registerSingleJuryVotes(Jury jury, Vote userVotes) {
+        log.debug("Registering votes for jury {}: {}", jury, userVotes);
         if (juryVoteURLMap == null) {
             throw new JuryMappingNotFoundException();
         }
@@ -182,14 +181,17 @@ public class ScorewizRepository extends BaseScorewizRepository {
         });
 
         submit(ID_VOTES_SUBMIT);
+        log.debug("Votes registered for jury {}", jury);
     }
 
     public void setTelevotes(List<Televote> televotes) {
+        log.debug("Setting {} televotes", televotes.size());
         String televotesURL = getActionURL("setTelevote");
         driver.get(televotesURL);
         waitPageLoads();
 
         televotes.forEach(televote -> {
+                    log.debug("Setting televote {}", televote);
                     WebElement input = driver.findElements(By.className("select")).stream()
                             .filter(e -> e.getText().equals(televote.getCountry()))
                             .findFirst()
@@ -203,14 +205,11 @@ public class ScorewizRepository extends BaseScorewizRepository {
         );
 
         submit(ID_NAMES_SUBMIT);
-    }
-
-    public void openFirstScoreboard() {
-        selectedScoreboard = getScoreboards().stream().findFirst().orElseThrow(NoScoreboardFoundException::new);
-        driver.get(getScoreboardURL());
+        log.debug("Televotes set");
     }
 
     public List<Scoreboard> getScoreboards() {
+        log.debug("Getting scoreboards");
         return findMainMenuButtons(EDIT).stream()
                 .map(e -> e.getAttribute("href"))
                 .map(scorewizUtils::getScoreboardFromURL)
@@ -218,11 +217,13 @@ public class ScorewizRepository extends BaseScorewizRepository {
     }
 
     public void deleteScoreboards() {
+        log.debug("Deleting scoreboards");
         while (true) {
             Optional<WebElement> deleteBtnOpt = findMainMenuButtons(DELETE).stream().findFirst();
             if (deleteBtnOpt.isEmpty()) {
                 break;
             }
+            log.debug("Deleting one scoreboard");
             removeHeader();
             var deleteBtn = deleteBtnOpt.get();
             scrollToElement(deleteBtn);
@@ -236,5 +237,6 @@ public class ScorewizRepository extends BaseScorewizRepository {
 
             waitPageLoads();
         }
+        log.debug("All scoreboards have been deleted");
     }
 }

@@ -3,7 +3,10 @@ package repositories.scorewiz;
 import config.ConfigRepository;
 import exceptions.LoginException;
 import exceptions.SelectorNotFoundException;
+import lombok.extern.slf4j.Slf4j;
+import models.MainMenuButtonType;
 import models.Scoreboard;
+import models.SubmitType;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptException;
 import org.openqa.selenium.JavascriptExecutor;
@@ -21,21 +24,20 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
+import static models.SubmitType.TAG_INPUT_TYPE_SUBMIT;
 
+@Slf4j
 public class BaseScorewizRepository {
+    protected final ScorewizUtils scorewizUtils;
+    protected final ConfigRepository config;
     protected WebDriver driver;
     protected Map<String, String> juryVoteURLMap;
     protected Scoreboard selectedScoreboard;
-
     protected String baseURL;
-
-    protected final ScorewizUtils scorewizUtils;
-    protected final ConfigRepository configRepository;
 
     public BaseScorewizRepository(ScorewizUtils scorewizUtils, ConfigRepository configRepository) {
         this.scorewizUtils = scorewizUtils;
-        this.configRepository = configRepository;
+        this.config = configRepository;
 
         baseURL = configRepository.getString("scorewiz.web.baseURL");
     }
@@ -49,14 +51,15 @@ public class BaseScorewizRepository {
     }
 
     private void provisionDriver() {
+        log.debug("Provisioning driver");
         FirefoxOptions options = new FirefoxOptions();
-//        options.addArguments("start-maximized");
-        if (configRepository.getBoolean("general.headless")) {
+        if (config.getBoolean("general.headless")) {
             options.addArguments("--headless");
             options.setHeadless(true);
         }
 
         driver = new FirefoxDriver(options);
+        log.debug("Driver provisioned");
     }
 
     protected String getSetOptionsURL(String action) {
@@ -99,8 +102,10 @@ public class BaseScorewizRepository {
 
     public void login() {
         provisionDriver();
-        var username = configRepository.getString("scorewiz.credentials.username");
-        var password = configRepository.getString("scorewiz.credentials.password");
+
+        log.debug("Logging in");
+        var username = config.getString("scorewiz.credentials.username");
+        var password = config.getString("scorewiz.credentials.password");
         driver.get(getLoginURL());
         driver.findElement(By.name("email")).sendKeys(username);
         driver.findElement(By.name("pass")).sendKeys(password);
@@ -108,12 +113,13 @@ public class BaseScorewizRepository {
         submit(TAG_INPUT_TYPE_SUBMIT);
 
         ensureLoginCorrect();
+        log.debug("Logged in");
     }
 
     private void ensureLoginCorrect() {
         String url = driver.getCurrentUrl();
-        var username = configRepository.getString("scorewiz.credentials.username");
-        var password = configRepository.getString("scorewiz.credentials.password");
+        var username = config.getString("scorewiz.credentials.username");
+        var password = config.getString("scorewiz.credentials.password");
 
         try {
             WebElement error = driver.findElement(By.id("error"));
@@ -127,8 +133,11 @@ public class BaseScorewizRepository {
     }
 
     public void logout() {
+        log.debug("Logging out");
         driver.get(getLogoutURL());
+        log.debug("Logged out");
         driver.close();
+        log.debug("Driver closed");
     }
 
     protected void scrollToElement(WebElement element) {
@@ -145,7 +154,7 @@ public class BaseScorewizRepository {
         try {
             ((JavascriptExecutor) driver).executeScript("document.getElementsByTagName(\"header\")[0].remove()");
         } catch (JavascriptException e) {
-            // ignore
+            log.warn("Failed to remove header", e);
         }
     }
 
@@ -169,6 +178,7 @@ public class BaseScorewizRepository {
     }
 
     private void submit(By selector) {
+        log.debug("Submitting form using {}", selector);
         WebElement namesSubmitBtn = driver.findElement(selector);
         scrollToElement(namesSubmitBtn);
         namesSubmitBtn.click();
@@ -179,6 +189,7 @@ public class BaseScorewizRepository {
     }
 
     protected void setCountryInFormWithAutocomplete(String country, Integer index) {
+        log.debug("Setting country {} in form with autocomplete (index={})", country, index);
         WebElement flagInput = driver.findElement(By.id("flag-select-" + (index)));
         scrollToElement(flagInput);
         flagInput.clear();

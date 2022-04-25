@@ -19,7 +19,10 @@ Optional:
 - **SW_SCOREBOARD_NAME**: The name of the scoreboard you want to use. Defaults to `Europarty 2022`.
 - **TEST**: If set to `true`, the datetime will be appended to the scoreboard name. Defaults to `false`.
 - **HEADLESS**: Whether to run the browser in headless mode. Defaults to `true`.
+- **LOG_LEVEL**: The log level to use. Defaults to `info`.
 
 ## Google Sheets Authentication
 
-TODO: fill this section.
+1. Create a new Google Cloud Platform project.
+2. Create a [new service account](https://console.cloud.google.com/iam-admin/serviceaccounts).
+3. Create an ssh key for the created service account. You must select the P12 format.
