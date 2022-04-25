@@ -23,7 +23,7 @@ jobs:
         run: curl -s https://scorewiz.eu
 
       - name: Setup Firefox Driver
-        run: apt install firefox-geckodriver -y
+        run: sudo apt install firefox-geckodriver -y
 
       - name: Grant execute permission to gradlew
         run: chmod +x gradlew
