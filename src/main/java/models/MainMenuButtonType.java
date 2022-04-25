@@ -1,4 +1,4 @@
-package repositories.scorewiz;
+package models;
 
 public enum MainMenuButtonType {
     VIEW("VIEW"),

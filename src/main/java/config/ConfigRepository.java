@@ -1,10 +1,12 @@
 package config;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.typesafe.config.Config;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Singleton
 public class ConfigRepository {
     private final Config config;
 

@@ -2,6 +2,7 @@ package services;
 
 import com.google.inject.Inject;
 import config.ConfigRepository;
+import lombok.extern.slf4j.Slf4j;
 import models.Jury;
 import models.Participant;
 import models.Scoreboard;
@@ -18,6 +19,7 @@ import validators.GlobalValidator;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 public class ScoreWizService {
     private final GlobalValidator validator;
     private final JuryRepository juryRepository;
@@ -50,6 +52,7 @@ public class ScoreWizService {
     }
 
     public void createScoreboard(String name) {
+        log.info("Launching createScoreboard method with name: {}", name);
         if (configRepository.getBoolean("general.test")) {
             name += " - Test " + LocalDateTime.now();
         }
@@ -86,6 +89,7 @@ public class ScoreWizService {
     }
 
     public void deleteAllScoreboards() {
+        log.info("Launching deleteAllScoreboards method");
         scorewizRepository.login();
         scorewizRepository.deleteScoreboards();
         scorewizRepository.logout();

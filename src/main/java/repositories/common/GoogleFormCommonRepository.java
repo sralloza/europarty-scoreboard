@@ -14,6 +14,7 @@ import config.ConfigRepository;
 import exceptions.InvalidPrivateKeyException;
 import exceptions.NoValidVotesFoundException;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import models.GoogleSheetsParticipant;
 import models.GoogleSheetsVote;
 
@@ -27,6 +28,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
+@Slf4j
 public class GoogleFormCommonRepository {
     private final String spreadsheetId;
     private final String spreadsheetRange;
@@ -104,6 +106,7 @@ public class GoogleFormCommonRepository {
         return strValues.stream()
                 .skip(1)
                 .map(mapper)
+                .peek(line -> log.debug("Parsed line from google sheets: {}", line))
                 .collect(Collectors.toList());
     }
 }

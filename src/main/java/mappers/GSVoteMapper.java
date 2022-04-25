@@ -1,5 +1,6 @@
 package mappers;
 
+import lombok.extern.slf4j.Slf4j;
 import models.GoogleSheetsVote;
 import models.Televote;
 import models.Vote;
@@ -11,8 +12,11 @@ import java.util.stream.Collectors;
 
 import static constants.EuropartyConstants.VOTE_POINTS_LIST;
 
+
+@Slf4j
 public class GSVoteMapper {
     public Vote buildVote(GoogleSheetsVote GSvote) {
+        log.debug("Building vote from GSvote: {}", GSvote);
         return new Vote()
                 .setJuryName(GSvote.getJuryName())
                 .setCountry1Points(GSvote.getVote1Pt())
@@ -28,6 +32,7 @@ public class GSVoteMapper {
     }
 
     public List<Televote> buildTelevotes(List<GoogleSheetsVote> GSvotes) {
+        log.debug("Building televotes from GSvotes: {}", GSvotes);
         Map<String, Integer> votesMap = new HashMap<>();
         List<Vote> votes = GSvotes.stream().map(this::buildVote).collect(Collectors.toList());
         for (Vote vote : votes) {

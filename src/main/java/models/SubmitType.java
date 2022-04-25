@@ -1,4 +1,4 @@
-package repositories.scorewiz;
+package models;
 
 public enum SubmitType {
     TAG_INPUT_TYPE_SUBMIT,
