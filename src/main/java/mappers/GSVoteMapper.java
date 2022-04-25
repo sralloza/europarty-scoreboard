@@ -31,9 +31,7 @@ public class GSVoteMapper {
         Map<String, Integer> votesMap = new HashMap<>();
         List<Vote> votes = GSvotes.stream().map(this::buildVote).collect(Collectors.toList());
         for (Vote vote : votes) {
-            VOTE_POINTS_LIST.forEach(n -> {
-                addPoints(votesMap, vote.getCountryByPoints(n), n);
-            });
+            VOTE_POINTS_LIST.forEach(n -> addPoints(votesMap, vote.getCountryByPoints(n), n));
         }
         return votesMap.entrySet().stream()
                 .map(e -> new Televote(e.getKey(), e.getValue()))

@@ -63,6 +63,18 @@ public class ScorewizRepository extends BaseScorewizRepository {
         selectedScoreboard = scorewizUtils.getScoreboardFromURL(driver.getCurrentUrl());
     }
 
+    public List<SimpleJury> getJuries() {
+        String url = getSetOptionsURL("juries");
+        driver.get(url);
+        int nParticipants = driver.findElements(By.className("select")).size();
+
+        return IntStream.range(0, nParticipants)
+                .mapToObj(i -> getSimpleJury(i + 1))
+                .takeWhile(jury -> jury.getCountryName() != null && !jury.getCountryName().isBlank())
+                .takeWhile(jury -> jury.getJuryLocalName() != null && !jury.getJuryLocalName().isBlank())
+                .collect(Collectors.toList());
+    }
+
     public void setJuries(List<Jury> juries) {
         String juriesURL = getSetOptionsURL("juries");
         driver.get(juriesURL);
@@ -80,18 +92,6 @@ public class ScorewizRepository extends BaseScorewizRepository {
                 }
         );
         submit(ID_NAMES_SUBMIT);
-    }
-
-    public List<SimpleJury> getJuries() {
-        String url = getSetOptionsURL("juries");
-        driver.get(url);
-        int nParticipants = driver.findElements(By.className("select")).size();
-
-        return IntStream.range(0, nParticipants)
-                .mapToObj(i -> getSimpleJury(i + 1))
-                .takeWhile(jury -> jury.getCountryName() != null && !jury.getCountryName().isBlank())
-                .takeWhile(jury -> jury.getJuryLocalName() != null && !jury.getJuryLocalName().isBlank())
-                .collect(Collectors.toList());
     }
 
     private SimpleJury getSimpleJury(int position) {

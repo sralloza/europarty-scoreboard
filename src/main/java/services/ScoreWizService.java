@@ -77,6 +77,7 @@ public class ScoreWizService {
 
         scorewizRepository.logout();
     }
+
     private void registerAllJuriesVotes(List<Vote> juryVotes) {
         for (Vote vote : juryVotes) {
             Jury jury = juryRepository.getByName(vote.getJuryName());

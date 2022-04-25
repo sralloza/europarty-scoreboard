@@ -24,14 +24,12 @@ import java.util.stream.Collectors;
 import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
 
 public class BaseScorewizRepository {
+    protected final ScorewizUtils scorewizUtils;
+    protected final ConfigRepository configRepository;
     protected WebDriver driver;
     protected Map<String, String> juryVoteURLMap;
     protected Scoreboard selectedScoreboard;
-
     protected String baseURL;
-
-    protected final ScorewizUtils scorewizUtils;
-    protected final ConfigRepository configRepository;
 
     public BaseScorewizRepository(ScorewizUtils scorewizUtils, ConfigRepository configRepository) {
         this.scorewizUtils = scorewizUtils;
