@@ -3,36 +3,30 @@ package repositories.scorewiz;
 import config.ConfigRepository;
 import exceptions.LoginException;
 import exceptions.SelectorNotFoundException;
-import lombok.SneakyThrows;
 import models.Scoreboard;
-import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.ScorewizUtils;
 
-import java.io.File;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static constants.ScorewizConstants.LOCAL_WEBDRIVER_PATH;
-import static constants.ScorewizConstants.WEBDRIVER_NAME;
 import static repositories.scorewiz.SubmitType.TAG_INPUT_TYPE_SUBMIT;
 
 public class BaseScorewizRepository {
     protected WebDriver driver;
     protected Map<String, String> juryVoteURLMap;
     protected Scoreboard selectedScoreboard;
-    private File extractedDriverFile;
 
     protected String baseURL;
 
@@ -54,44 +48,15 @@ public class BaseScorewizRepository {
         return baseURL + "/%s/%s/%s";
     }
 
-    @SneakyThrows
-    private void provisionWebdriverFile() {
-        if (LOCAL_WEBDRIVER_PATH.exists()) {
-            System.out.println("Skipping extraction of webdriver file");
-            return;
-        }
-
-        extractedDriverFile = File.createTempFile("chromedriver", "").getAbsoluteFile();
-        System.out.println("Extracted webdriver file: " + extractedDriverFile);
-        if (!extractedDriverFile.setExecutable(true)) {
-            System.err.println("Failed to set executable flag on chromedriver: " + extractedDriverFile);
-        }
-        FileUtils.copyInputStreamToFile(ConfigRepository.getResource(WEBDRIVER_NAME), extractedDriverFile);
-    }
-
-    private void removeWebdriverFile() {
-        if (LOCAL_WEBDRIVER_PATH.exists()) {
-            System.out.println("Skipping removal of webdriver file");
-            return;
-        }
-        if (!extractedDriverFile.delete()) {
-            System.out.println("Failed to delete webdriver file: " + extractedDriverFile);
-        }
-
-    }
-
     private void provisionDriver() {
-        provisionWebdriverFile();
-        System.setProperty("webdriver.chrome.driver",
-                Objects.requireNonNullElse(extractedDriverFile, LOCAL_WEBDRIVER_PATH).getPath());
-
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("start-maximized");
+        FirefoxOptions options = new FirefoxOptions();
+//        options.addArguments("start-maximized");
         if (configRepository.getBoolean("general.headless")) {
             options.addArguments("--headless");
+            options.setHeadless(true);
         }
 
-        driver = new ChromeDriver(options);
+        driver = new FirefoxDriver(options);
     }
 
     protected String getSetOptionsURL(String action) {
@@ -164,7 +129,6 @@ public class BaseScorewizRepository {
     public void logout() {
         driver.get(getLogoutURL());
         driver.close();
-        removeWebdriverFile();
     }
 
     protected void scrollToElement(WebElement element) {

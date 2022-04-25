@@ -171,6 +171,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
         waitPageLoads();
 
         runJavascript("noDnd()");
+        removeHeader();
         waitPageLoads();
 
         VOTE_POINTS_LIST.forEach(i -> {
