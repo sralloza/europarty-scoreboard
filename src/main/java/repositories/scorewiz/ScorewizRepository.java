@@ -38,9 +38,11 @@ import static models.SubmitType.TAG_INPUT_TYPE_SUBMIT;
 
 @Slf4j
 public class ScorewizRepository extends BaseScorewizRepository {
+    private final StyleHelper styleHelper;
     @Inject
-    public ScorewizRepository(ScorewizUtils scorewizUtils, ConfigRepository configRepository) {
+    public ScorewizRepository(ScorewizUtils scorewizUtils, ConfigRepository configRepository, StyleHelper styleHelper) {
         super(scorewizUtils, configRepository);
+        this.styleHelper = styleHelper;
     }
 
     public void createScoreboard(String name) {
@@ -238,5 +240,17 @@ public class ScorewizRepository extends BaseScorewizRepository {
             waitPageLoads();
         }
         log.debug("All scoreboards have been deleted");
+    }
+
+    public void setColors(){
+        String colorUrl = getSetOptionsURL("color");
+        log.debug("Setting colors, opening url {}", colorUrl);
+        driver.get(colorUrl);
+        removeHeader();
+        styleHelper.setStyles(driver.findElement(By.cssSelector("form[method='post']")),
+                this::scrollToElement,
+                this::waitPageLoads,
+                this::runJavascript,
+                driver);
     }
 }

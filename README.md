@@ -4,7 +4,7 @@
 
 Configuration is managed by environment variables.
 
-Required:
+### Required
 
 - **SW_USERNAME**: Your scorewiz username
 - **SW_PASSWORD**: Your scorewiz password
@@ -14,7 +14,21 @@ Required:
 - **GS_TELEVOTE_ID**: The Google Sheet ID of the televotes sheet.
 - **GS_PARTICIPANTS_ID**: The Google Sheet ID of the participants sheet.
 
-Optional:
+### Optional
+
+#### Style
+
+- **SW_FOREGROUND_LETTERS**: Color of the letters and numbers on the scoreboard. Can be `white` or `black`. Defaults to `white`.
+- **SW_BACKGROUND_SCOREBOARD_PAGE**: Background color of the scoreboard page. Defaults to `002A70`.
+- **SW_BACKGROUND_PARTICIPANT_DEFAULT**: Default background for any participant yet to vote, not getting votes yet and not voting itself. Default to `001436`.
+- **SW_BACKGROUND_PARTICIPANT_VOTED**: Background of participants that already voted. Defaults to `000C21`.
+- **SW_BACKGROUND_PARTICIPANT_RECEIVING_VOTES**: Background of the participants currently getting votes. Defaults to `000899`.
+- **SW_BACKGROUND_PARTICIPANT_VOTING**: Background of the participant currently voting. Defaults to `000000`.
+- **SW_UPPERCASE_PARTICIPANTS**: Display the names of participants in upper case. Defaults to `true`.
+- **SW_FAST_MODE**: Enable fast mode (lower points appear at once, only three highest scores come in one by one). Defaults to `false`.
+
+#### Other
+
 - **SW_BASE_URL**: The base URL of your scorewiz installation. Defaults to `https://scorewiz.com`.
 - **SW_SCOREBOARD_NAME**: The name of the scoreboard you want to use. Defaults to `Europarty 2022`.
 - **TEST**: If set to `true`, the datetime will be appended to the scoreboard name. Defaults to `false`.

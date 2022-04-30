@@ -77,17 +77,6 @@ public class BaseScorewizRepository {
         return String.format(getActionURLTemplate(), action, scoreboard.getSid(), scoreboard.getPass());
     }
 
-    protected String getScoreboardURL() {
-        if (selectedScoreboard == null) {
-            throw new IllegalStateException("No scoreboard selected");
-        }
-        return getScoreboardURL(selectedScoreboard);
-    }
-
-    protected String getScoreboardURL(Scoreboard scoreboard) {
-        return getActionURL("menu", scoreboard);
-    }
-
     protected String getLoginURL() {
         return baseURL + "/login";
     }
@@ -117,6 +106,7 @@ public class BaseScorewizRepository {
     }
 
     private void ensureLoginCorrect() {
+        waitPageLoads();
         String url = driver.getCurrentUrl();
         var username = config.getString("scorewiz.credentials.username");
         var password = config.getString("scorewiz.credentials.password");

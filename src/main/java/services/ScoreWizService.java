@@ -17,6 +17,7 @@ import repositories.vote.VoteRepository;
 import validators.GlobalValidator;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -58,25 +59,26 @@ public class ScoreWizService {
         }
         validator.validateScoreboardName(name);
 
-        List<Jury> juries = juryRepository.getJuriesSorted();
-        List<Participant> participants = participantRepository.getParticipants();
-        validator.validateJuries(participants, juries);
+//        List<Jury> juries = juryRepository.getJuriesSorted();
+//        List<Participant> participants = participantRepository.getParticipants();
+//        validator.validateJuries(participants, juries);
 
-        List<Vote> votes = votesRepository.getJuryVotes();
-        validator.validateVotes(participants, juries, votes);
+//        List<Vote> votes = votesRepository.getJuryVotes();
+//        validator.validateVotes(participants, juries, votes);
 
-        List<Televote> televotes = televoteRepository.getTelevotes();
-        validator.validateTelevotes(participants, televotes);
+//        List<Televote> televotes = televoteRepository.getTelevotes();
+//        validator.validateTelevotes(participants, televotes);
 
         scorewizRepository.login();
         scorewizRepository.createScoreboard(name);
+        scorewizRepository.setColors();
 
-        scorewizRepository.setJuries(juries);
-        scorewizRepository.setParticipants(participants);
+//        scorewizRepository.setJuries(juries);
+//        scorewizRepository.setParticipants(participants);
 
-        scorewizRepository.genJuryMapping();
-        registerAllJuriesVotes(votes);
-        scorewizRepository.setTelevotes(televotes);
+//        scorewizRepository.genJuryMapping();
+//        registerAllJuriesVotes(votes);
+//        scorewizRepository.setTelevotes(televotes);
 
         scorewizRepository.logout();
     }
