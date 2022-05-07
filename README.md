@@ -19,13 +19,13 @@ Configuration is managed by environment variables.
 #### Style
 
 - **SW_FOREGROUND_LETTERS**: Color of the letters and numbers on the scoreboard. Can be `white` or `black`. Defaults to `white`.
-- **SW_BACKGROUND_SCOREBOARD_PAGE**: Background color of the scoreboard page. Defaults to `002A70`.
-- **SW_BACKGROUND_PARTICIPANT_DEFAULT**: Default background for any participant yet to vote, not getting votes yet and not voting itself. Default to `001436`.
-- **SW_BACKGROUND_PARTICIPANT_VOTED**: Background of participants that already voted. Defaults to `000C21`.
-- **SW_BACKGROUND_PARTICIPANT_RECEIVING_VOTES**: Background of the participants currently getting votes. Defaults to `000899`.
-- **SW_BACKGROUND_PARTICIPANT_VOTING**: Background of the participant currently voting. Defaults to `000000`.
+- **SW_BACKGROUND_SCOREBOARD_PAGE**: Background color of the scoreboard page. Defaults to `1B0F3B`.
+- **SW_BACKGROUND_PARTICIPANT_DEFAULT**: Default background for any participant yet to vote, not getting votes yet and not voting itself. Default to `967C48`.
+- **SW_BACKGROUND_PARTICIPANT_VOTED**: Background of participants that already voted. Defaults to `B35B40`.
+- **SW_BACKGROUND_PARTICIPANT_RECEIVING_VOTES**: Background of the participants currently getting votes. Defaults to `AFB376`.
+- **SW_BACKGROUND_PARTICIPANT_VOTING**: Background of the participant currently voting. Defaults to `A68414`.
 - **SW_UPPERCASE_PARTICIPANTS**: Display the names of participants in upper case. Defaults to `true`.
-- **SW_FAST_MODE**: Enable fast mode (lower points appear at once, only three highest scores come in one by one). Defaults to `false`.
+- **SW_FAST_MODE**: Enable fast mode (lower points appear at once, only three highest scores come in one by one). Defaults to `true`.
 
 #### Other
 
