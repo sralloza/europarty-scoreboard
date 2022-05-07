@@ -15,13 +15,13 @@ public interface JuryRepository {
         return juries;
     }
 
-    default Jury getByName(String name) {
+    default Jury getByLocalName(String localName) {
         for (Jury jury : getJuries()) {
-            if (jury.getName().equals(name)) {
+            if (jury.getLocalName().equalsIgnoreCase(localName)) {
                 return jury;
             }
         }
-        throw new JuryNotFoundException(name);
+        throw new JuryNotFoundException(localName);
     }
 }
 

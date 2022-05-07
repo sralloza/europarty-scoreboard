@@ -85,7 +85,7 @@ public class ScoreWizService {
 
     private void registerAllJuriesVotes(List<Vote> juryVotes) {
         for (Vote vote : juryVotes) {
-            Jury jury = juryRepository.getByName(vote.getJuryName());
+            Jury jury = juryRepository.getByLocalName(vote.getJuryName());
             scorewizRepository.registerSingleJuryVotes(jury, vote);
         }
     }

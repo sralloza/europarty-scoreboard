@@ -16,7 +16,7 @@ public class VotesValidator {
 
     public void validate(List<Participant> savedParticipants, List<Jury> juries, List<Vote> juryVotes) {
         /* Conditions for valid vote:
-         * 1. The jury must be registered in the list of juries
+         * 1. The jury must be registered in the list of juries (local name)
          * 2. Each country voted must be registered in the list of participants
          * 3. Each country voted must not be excluded from voting
          * 4. Each jury must vote only once
@@ -24,7 +24,7 @@ public class VotesValidator {
 
         juryVotes.forEach(vote -> {
             Optional<Jury> jury = juries.stream()
-                    .filter(j -> j.getName().equals(vote.getJuryName()))
+                    .filter(j -> j.getLocalName().equals(vote.getJuryName()))
                     .findAny();
 
             if (jury.isEmpty()) {
