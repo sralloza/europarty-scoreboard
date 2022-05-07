@@ -10,6 +10,7 @@ import repositories.HttpRepository;
 import javax.inject.Inject;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.Map.entry;
 
@@ -47,6 +48,10 @@ public class StyleHelper {
                 entry(getSelector(UPPERCASE_PARTICIPANTS_CFG), getBoolean(UPPERCASE_PARTICIPANTS_CFG)),
                 entry(getSelector(FAST_MODE_CFG), getBoolean(FAST_MODE_CFG)));
 
+        data = data.entrySet().stream()
+                .filter(entry -> !entry.getValue().equals(""))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
         var url = config.getString("scorewiz.web.baseURL");
         var path = "/saveOptions/color";
         log.debug("Setting styles: {}", data);
@@ -61,7 +66,7 @@ public class StyleHelper {
     }
 
     private String getBoolean(String key) {
-        return config.getStyleBoolean(key) ? "on" : "off";
+        return config.getStyleBoolean(key) ? "on" : "";
     }
 
     public String getSelector(String selector) {
