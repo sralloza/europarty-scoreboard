@@ -5,6 +5,7 @@ import config.ConfigRepository;
 import exceptions.CountryNotFoundException;
 import exceptions.JuryMappingNotFoundException;
 import exceptions.JuryNotFoundException;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import models.Jury;
 import models.Participant;
@@ -39,6 +40,7 @@ import static models.SubmitType.TAG_INPUT_TYPE_SUBMIT;
 @Slf4j
 public class ScorewizRepository extends BaseScorewizRepository {
     private final StyleHelper styleHelper;
+
     @Inject
     public ScorewizRepository(ScorewizUtils scorewizUtils, ConfigRepository configRepository, StyleHelper styleHelper) {
         super(scorewizUtils, configRepository);
@@ -242,15 +244,9 @@ public class ScorewizRepository extends BaseScorewizRepository {
         log.debug("All scoreboards have been deleted");
     }
 
-    public void setColors(){
-        String colorUrl = getSetOptionsURL("color");
-        log.debug("Setting colors, opening url {}", colorUrl);
-        driver.get(colorUrl);
-        removeHeader();
-        styleHelper.setStyles(driver.findElement(By.cssSelector("form[method='post']")),
-                this::scrollToElement,
-                this::waitPageLoads,
-                this::runJavascript,
-                driver);
+    @SneakyThrows
+    public void setColors(String scoreboardName) {
+        log.debug("Setting colors ({})", this.selectedScoreboard);
+        styleHelper.setStyles(driver, this.selectedScoreboard, scoreboardName, "participantVoted");
     }
 }
