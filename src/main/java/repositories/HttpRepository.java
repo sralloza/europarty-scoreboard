@@ -52,7 +52,7 @@ public class HttpRepository {
                     log.debug("Response status: " + u.statusCode());
                     log.debug("Response headers: " + u.headers());
                     log.debug("Request body: " + u.body());
-                    return u.statusCode() == 200;
+                    return Set.of("2", "3").contains(String.format("%03d", u.statusCode()).substring(0, 1));
                 });
     }
 }
