@@ -19,10 +19,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class HttpRepository {
     @SneakyThrows
-    public CompletableFuture<Boolean> sendRequest(String baseURL,
-                                                  String path,
-                                                  Set<Cookie> cookies,
-                                                  Map<String, String> data) {
+    public CompletableFuture<Boolean> sendRequestFormUrlEncoded(String baseURL,
+                                                                String path,
+                                                                Set<Cookie> cookies,
+                                                                Map<String, String> data) {
         String payload = data.entrySet().stream()
                 .map(entry -> entry.getKey() + "=" + entry.getValue())
                 .collect(Collectors.joining("&"));

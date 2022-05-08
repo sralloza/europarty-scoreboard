@@ -55,7 +55,7 @@ public class StyleHelper {
         var url = config.getString("scorewiz.web.baseURL");
         var path = "/saveOptions/color";
         log.debug("Setting styles: {}", data);
-        http.sendRequest(url, path, cookies, data)
+        http.sendRequestFormUrlEncoded(url, path, cookies, data)
                 .thenAcceptAsync(response -> {
                     if (!response) {
                         log.error("Failed to set styles");

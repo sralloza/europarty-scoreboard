@@ -17,7 +17,6 @@ import repositories.vote.VoteRepository;
 import validators.GlobalValidator;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
