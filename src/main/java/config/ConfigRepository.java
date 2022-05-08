@@ -20,6 +20,18 @@ public class ConfigRepository {
         return config.getString(key);
     }
 
+    public String getSelector(String key) {
+        return getString("scorewiz.selector." + key);
+    }
+
+    public String getStyleString(String key) {
+        return getString("scorewiz.style." + key);
+    }
+
+    public boolean getStyleBoolean(String key) {
+        return getBoolean("scorewiz.style." + key);
+    }
+
     public Boolean getBoolean(String key) {
         return config.getBoolean(key);
     }

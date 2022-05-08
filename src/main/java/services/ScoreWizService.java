@@ -70,6 +70,7 @@ public class ScoreWizService {
 
         scorewizRepository.login();
         scorewizRepository.createScoreboard(name);
+        scorewizRepository.setColors(name);
 
         scorewizRepository.setJuries(juries);
         scorewizRepository.setParticipants(participants);
