@@ -16,4 +16,7 @@ public class CountryNotFoundException extends RuntimeException {
         this(jury.getCountry(), jury.getName());
     }
 
+    public CountryNotFoundException(String country, Jury jury) {
+        this(country, jury.getName());
+    }
 }
