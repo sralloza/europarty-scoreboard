@@ -18,6 +18,7 @@ import validators.GlobalValidator;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class ScoreWizService {
@@ -108,5 +109,17 @@ public class ScoreWizService {
         List<SimpleJury> simpleJuries = scorewizRepository.getJuries();
         scorewizRepository.logout();
         return simpleJuries;
+    }
+
+    public void validateData() {
+        List<Jury> juries = juryRepository.getJuriesSorted();
+        List<Participant> participants = participantRepository.getParticipants();
+        validator.validateJuries(participants, juries);
+
+        List<Vote> votes = votesRepository.getJuryVotes();
+        validator.validateVotes(participants, juries, votes);
+
+        List<Televote> televotes = televoteRepository.getTelevotes();
+        validator.validateTelevotes(participants, televotes);
     }
 }
