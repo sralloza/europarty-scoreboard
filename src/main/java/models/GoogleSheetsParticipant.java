@@ -14,7 +14,7 @@ public class GoogleSheetsParticipant {
     private String juryLocalName;
     private String juryRealName;
     private boolean finalist;
-    private int votingOrder = 0;
+    private int votingOrder = 100;
 
     public GoogleSheetsParticipant(List<String> spreadsheetRow) {
         /* Valid sizes:

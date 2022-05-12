@@ -1,5 +1,7 @@
 # Europarty Scoreboard
 
+[![E2E Tests](https://github.com/sralloza/europarty-scoreboard/actions/workflows/ci.yml/badge.svg)](https://github.com/sralloza/europarty-scoreboard/actions/workflows/ci.yml)
+
 ## Configuration
 
 Configuration is managed by environment variables.
