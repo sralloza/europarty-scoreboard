@@ -2,6 +2,7 @@ package models;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import utils.BooleanUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -32,24 +33,10 @@ public class GoogleSheetsParticipant {
         juryLocalName = emptyStringToNull(spreadsheetRow.get(1));
         juryRealName = emptyStringToNull(spreadsheetRow.get(2));
 
-        finalist = getFinalist(spreadsheetRow);
+        finalist = BooleanUtils.stringToBoolean(spreadsheetRow.get(3));
 
         if (spreadsheetRow.size() > 4) {
             votingOrder = Integer.parseInt(spreadsheetRow.get(4));
-        }
-    }
-
-    private boolean getFinalist(List<String> spreadsheetRow) {
-        var finalistString = spreadsheetRow.get(3).toLowerCase();
-
-        switch (finalistString) {
-            case "true":
-                return true;
-            case "false":
-                return false;
-            default:
-                throw new IllegalArgumentException("Finalist must be true or false (received: " + finalistString
-                        + ", spreadsheet row: " + spreadsheetRow + ")");
         }
     }
 
