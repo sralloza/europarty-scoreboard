@@ -1,5 +1,6 @@
 package validators;
 
+import exceptions.CountryNotFoundException;
 import exceptions.DuplicateVoteException;
 import exceptions.ExcludedCountryException;
 import exceptions.JuryNotFoundException;
@@ -22,6 +23,7 @@ public class VotesValidator {
          * 4. Each jury must vote only once
          */
 
+        // 1. The jury must be registered in the list of juries (local name)
         juryVotes.forEach(vote -> {
             Optional<Jury> jury = juries.stream()
                     .filter(j -> j.getLocalName().equals(vote.getJuryName()))
@@ -31,15 +33,17 @@ public class VotesValidator {
                 throw new JuryNotFoundException(vote.getJuryName());
             }
 
-            vote.getAllPoints().forEach(s -> {
+            // 2. Each country voted must be registered in the list of participants
+            vote.getAllPoints().forEach(countryVoted -> {
                 Optional<Participant> participantOpt = savedParticipants.stream()
-                        .filter(p -> s.equals(p.getName()))
+                        .filter(p -> countryVoted.equals(p.getName()))
                         .findAny();
 
                 if (participantOpt.isEmpty()) {
-                    throw new JuryNotFoundException(vote.getJuryName());
+                    throw new CountryNotFoundException(countryVoted, jury.get());
                 }
 
+                // 3. Each country voted must not be excluded from voting
                 Participant participant = participantOpt.get();
                 if (participant.isExcluded()) {
                     throw new ExcludedCountryException(participant, vote);
@@ -47,6 +51,7 @@ public class VotesValidator {
             });
         });
 
+        // 4. Each jury must vote only once
         List<String> duplicateVotes = juryVotes.stream()
                 .collect(Collectors.groupingBy(Vote::getJuryName))
                 .entrySet()
