@@ -11,7 +11,7 @@ public interface JuryRepository {
 
     default List<Jury> getJuriesSorted() {
         List<Jury> juries = getJuries();
-        juries.sort(Comparator.comparingInt(Jury::getVoteOrder).reversed());
+        juries.sort(Comparator.comparingInt(Jury::getVoteOrder));
         return juries;
     }
 
