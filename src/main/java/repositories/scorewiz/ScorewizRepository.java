@@ -116,15 +116,24 @@ public class ScorewizRepository extends BaseScorewizRepository {
     }
 
     public void setParticipants(List<Participant> participants) {
-        log.debug("Setting {} participants", participants.size());
+        log.debug("Participants before filter: {}", participants.size());
+        var filteredParticipants = participants.stream()
+                .filter(participant -> !participant.isExcluded())
+                .collect(Collectors.toList());
+        log.debug("Participants after filter: {}", filteredParticipants.size());
+
         String participantsURL = getSetOptionsURL("participants");
         driver.get(participantsURL);
         waitPageLoads();
         removeHeaderAndFooter();
 
-        IntStream.range(0, participants.size()).forEach(i -> {
-                    String participant = participants.get(i).getName();
-                    setCountryInFormWithAutocomplete(participant, i + 1);
+        IntStream.range(0, filteredParticipants.size()).forEach(i -> {
+                    var participant = filteredParticipants.get(i);
+                    if (participant.isExcluded()) {
+                        log.debug("Excluding participant {}", participant);
+                        return;
+                    }
+                    setCountryInFormWithAutocomplete(participant.getName(), i + 1);
                 }
         );
 
@@ -193,6 +202,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
         String televotesURL = getActionURL("setTelevote");
         driver.get(televotesURL);
         waitPageLoads();
+        removeHeaderAndFooter();
 
         televotes.forEach(televote -> {
                     log.debug("Setting televote {}", televote);
