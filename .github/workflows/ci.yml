@@ -22,8 +22,17 @@ jobs:
       - name: Ping scorewiz
         run: curl -s https://scorewiz.eu
 
+      - name: Get firefox version
+        run: firefox --version
+
       - name: Setup Firefox Driver
-        run: sudo apt install firefox-geckodriver -y
+        run: |
+          wget https://github.com/mozilla/geckodriver/releases/download/v0.31.0/geckodriver-v0.31.0-linux64.tar.gz
+          sudo tar -xvf geckodriver-*.tar.gz      
+          sudo mv geckodriver /usr/local/share/gecko_driver/
+
+      - name: Check Firefox Driver installation
+        run: geckodriver --version
 
       - name: Grant execute permission to gradlew
         run: chmod +x gradlew
