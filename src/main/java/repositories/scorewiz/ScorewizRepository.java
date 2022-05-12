@@ -91,7 +91,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
         driver.get(juriesURL);
         waitPageLoads();
 
-        removeHeader();
+        removeHeaderAndFooter();
 
         IntStream.range(0, juries.size()).forEach(i -> {
                     Jury jury = juries.get(i);
@@ -120,7 +120,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
         String participantsURL = getSetOptionsURL("participants");
         driver.get(participantsURL);
         waitPageLoads();
-        removeHeader();
+        removeHeaderAndFooter();
 
         IntStream.range(0, participants.size()).forEach(i -> {
                     String participant = participants.get(i).getName();
@@ -174,7 +174,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
         waitPageLoads();
 
         runJavascript("noDnd()");
-        removeHeader();
+        removeHeaderAndFooter();
         waitPageLoads();
 
         VOTE_POINTS_LIST.forEach(i -> {
@@ -228,7 +228,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
                 break;
             }
             log.debug("Deleting one scoreboard");
-            removeHeader();
+            removeHeaderAndFooter();
             var deleteBtn = deleteBtnOpt.get();
             scrollToElement(deleteBtn);
             deleteBtn.click();

@@ -22,6 +22,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static models.SubmitType.TAG_INPUT_TYPE_SUBMIT;
@@ -140,11 +141,14 @@ public class BaseScorewizRepository {
                 webDriver -> runJavascript("return document.readyState").equals("complete"));
     }
 
-    protected void removeHeader() {
-        try {
-            ((JavascriptExecutor) driver).executeScript("document.getElementsByTagName(\"header\")[0].remove()");
-        } catch (JavascriptException e) {
-            log.warn("Failed to remove header", e);
+    protected void removeHeaderAndFooter() {
+        Set<String> tagsToRemove = Set.of("header", "footer");
+        for (String tag : tagsToRemove) {
+            try {
+                ((JavascriptExecutor) driver).executeScript("document.getElementsByTagName(\"" + tag + "\")[0].remove()");
+            } catch (JavascriptException e) {
+                log.warn("Failed to remove " + tag, e);
+            }
         }
     }
 
