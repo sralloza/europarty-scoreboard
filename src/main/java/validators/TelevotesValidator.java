@@ -19,7 +19,7 @@ public class TelevotesValidator {
                 throw new CountryNotFoundException(televote);
             }
             Participant participant = participantOpt.get();
-            if (participant.isExcluded()) {
+            if (!participant.isFinalist()) {
                 throw new ExcludedCountryException(participant, televote);
             }
         });

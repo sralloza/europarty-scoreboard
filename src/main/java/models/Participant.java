@@ -7,5 +7,5 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class Participant {
     private String name;
-    private boolean excluded = false;
+    private boolean finalist;
 }

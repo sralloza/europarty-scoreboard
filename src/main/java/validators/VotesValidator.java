@@ -45,7 +45,7 @@ public class VotesValidator {
 
                 // 3. Each country voted must not be excluded from voting
                 Participant participant = participantOpt.get();
-                if (participant.isExcluded()) {
+                if (!participant.isFinalist()) {
                     throw new ExcludedCountryException(participant, vote);
                 }
             });

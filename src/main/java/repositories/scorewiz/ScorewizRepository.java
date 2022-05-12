@@ -118,7 +118,7 @@ public class ScorewizRepository extends BaseScorewizRepository {
     public void setParticipants(List<Participant> participants) {
         log.debug("Participants before filter: {}", participants.size());
         var filteredParticipants = participants.stream()
-                .filter(participant -> !participant.isExcluded())
+                .filter(Participant::isFinalist)
                 .collect(Collectors.toList());
         log.debug("Participants after filter: {}", filteredParticipants.size());
 
@@ -129,8 +129,8 @@ public class ScorewizRepository extends BaseScorewizRepository {
 
         IntStream.range(0, filteredParticipants.size()).forEach(i -> {
                     var participant = filteredParticipants.get(i);
-                    if (participant.isExcluded()) {
-                        log.debug("Excluding participant {}", participant);
+                    if (!participant.isFinalist()) {
+                        log.debug("Excluding participant (not in the final) {}", participant);
                         return;
                     }
                     setCountryInFormWithAutocomplete(participant.getName(), i + 1);

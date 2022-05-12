@@ -33,7 +33,7 @@ public class GSParticipantMapper {
         log.debug("Building participant from GoogleSheetsParticipant: {}", googleSheetsParticipant);
         return new Participant()
                 .setName(googleSheetsParticipant.getCountryName())
-                .setExcluded(googleSheetsParticipant.isExcluded());
+                .setFinalist(googleSheetsParticipant.isFinalist());
     }
 
     public List<Participant> buildParticipants(List<GoogleSheetsParticipant> googleSheetsParticipants) {
