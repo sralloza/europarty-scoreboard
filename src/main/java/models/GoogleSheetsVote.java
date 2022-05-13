@@ -31,15 +31,6 @@ public class GoogleSheetsVote {
             throw new IllegalArgumentException("Spreadsheet row must have 12 columns (found " + spreadsheetRow.size() + ")");
         }
 
-        List<String> countries = spreadsheetRow.subList(2, spreadsheetRow.size());
-        Set<String> duplicateCountries = countries.stream()
-                .filter(i -> Collections.frequency(countries, i) > 1)
-                .collect(Collectors.toSet());
-
-        if (!duplicateCountries.isEmpty()) {
-            throw new IllegalArgumentException("Spreadsheet row contains duplicate countries: " + duplicateCountries);
-        }
-
         timestamp = LocalDateTime.parse(spreadsheetRow.get(0), DateTimeFormatter.ofPattern("d/MM/yyyy HH:mm:ss"));
         juryName = spreadsheetRow.get(1);
         vote1Pt = spreadsheetRow.get(2);
