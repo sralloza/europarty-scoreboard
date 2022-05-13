@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -41,8 +42,8 @@ public class Vote {
     @JsonProperty("12")
     private String country12Points;
 
-    public Set<String> getAllPoints() {
-        return Set.of(
+    public List<String> getAllPoints() {
+        return List.of(
                 country1Points,
                 country2Points,
                 country3Points,

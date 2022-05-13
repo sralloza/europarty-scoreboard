@@ -1,19 +1,28 @@
 package validators;
 
 import exceptions.CountryNotFoundException;
-import exceptions.DuplicateVoteException;
 import exceptions.ExcludedCountryException;
+import exceptions.InvalidVoteException;
 import exceptions.JuryNotFoundException;
+import exceptions.TooManyVotesByOneJuryException;
 import models.Jury;
 import models.Participant;
 import models.Vote;
+import utils.SetUtils;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class VotesValidator {
+    private final SetUtils setUtils;
+
+    @Inject
+    public VotesValidator(SetUtils setUtils) {
+        this.setUtils = setUtils;
+    }
 
     public void validate(List<Participant> savedParticipants, List<Jury> juries, List<Vote> juryVotes) {
         /* Conditions for valid vote:
@@ -21,6 +30,7 @@ public class VotesValidator {
          * 2. Each country voted must be registered in the list of participants
          * 3. Each country voted must not be excluded from voting
          * 4. Each jury must vote only once
+         * 5. Each jury can not vote a country more than once
          */
 
         // 1. The jury must be registered in the list of juries (local name)
@@ -61,7 +71,16 @@ public class VotesValidator {
                 .collect(Collectors.toList());
 
         if (!duplicateVotes.isEmpty()) {
-            throw new DuplicateVoteException(duplicateVotes);
+            throw new TooManyVotesByOneJuryException(duplicateVotes);
         }
+
+        // 5. Each jury can not vote a country more than once
+        juryVotes.forEach(vote -> {
+            var countriesVoted = vote.getAllPoints();
+            var duplicatedVotes = setUtils.findDuplicates(countriesVoted);
+            if (!duplicatedVotes.isEmpty()) {
+                throw new InvalidVoteException(duplicatedVotes, vote.getJuryName());
+            }
+        });
     }
 }
