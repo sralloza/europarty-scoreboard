@@ -1,18 +1,21 @@
 package validators;
 
+import validators.helpers.ValidationResult;
+import validators.helpers.ValidationStep;
+
 public class DefaultScoreboardValidationService implements ScoreboardValidationService {
     @Override
     public ValidationResult validate(String scoreboardName) {
-        return new InvalidCharactersInNameValidationStep().verify(scoreboardName);
+        return new InvalidCharactersInNameValidationStep().run(scoreboardName);
     }
 
     private static class InvalidCharactersInNameValidationStep extends ValidationStep<String> {
         @Override
-        public ValidationResult verify(String scoreboardName) {
-            if (scoreboardName.contains("\"") || scoreboardName.contains("'")) {
-                return ValidationResult.invalid("Invalid name, contains a quote: '" + scoreboardName + "'");
+        public ValidationResult verify(String toValidate) {
+            if (toValidate.contains("\"") || toValidate.contains("'")) {
+                return ValidationResult.invalid("Invalid name, contains a quote: '" + toValidate + "'");
             }
-            return ValidationResult.valid();
+            return checkNext(toValidate);
         }
     }
 }

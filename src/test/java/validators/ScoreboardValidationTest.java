@@ -1,15 +1,11 @@
 package validators;
 
-import models.Jury;
-import models.Participant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
-
-import java.util.List;
+import validators.helpers.ValidationResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 public class ScoreboardValidationTest {
     private ScoreboardValidationService scoreboardValidationService;

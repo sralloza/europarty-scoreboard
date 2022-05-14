@@ -66,7 +66,7 @@ public class ScoreWizService {
         validator.validateVotes(participants, juries, votes);
 
         List<Televote> televotes = televoteRepository.getTelevotes();
-        validator.validateTelevotes(participants, televotes);
+        validator.validateTelevotes(televotes);
 
         scorewizRepository.login();
         scorewizRepository.createScoreboard(name);
@@ -119,6 +119,6 @@ public class ScoreWizService {
         validator.validateVotes(participants, juries, votes);
 
         List<Televote> televotes = televoteRepository.getTelevotes();
-        validator.validateTelevotes(participants, televotes);
+        validator.validateTelevotes(televotes);
     }
 }

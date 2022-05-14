@@ -6,20 +6,22 @@ import models.Jury;
 import models.Participant;
 import models.Televote;
 import models.Vote;
+import validators.helpers.ValidationResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GlobalValidator {
     private final JuryValidationService juriesValidator;
     private final VotesValidator votesValidator;
-    private final TelevotesValidator televotesValidator;
+    private final TelevotesValidationService televotesValidator;
     private final ScoreboardValidationService scoreboardNameValidator;
 
     @Inject
     public GlobalValidator(JuryValidationService juriesValidator,
                            VotesValidator votesValidator,
-                           TelevotesValidator televotesValidator,
+                           TelevotesValidationService televotesValidator,
                            ScoreboardValidationService scoreboardNameValidator) {
         this.juriesValidator = juriesValidator;
         this.votesValidator = votesValidator;
@@ -34,11 +36,12 @@ public class GlobalValidator {
     }
 
     public void validateJuries(List<Jury> juries) {
-        List<ValidationResult> results = new ArrayList<>();
-        for (Jury jury : juries) {
-            results.add(juriesValidator.validate(jury));
-        }
-        if (results.stream().anyMatch(ValidationResult::notValid)) {
+        List<ValidationResult> results = juries.stream()
+                .map(juriesValidator::validate)
+                .filter(ValidationResult::notValid)
+                .collect(Collectors.toList());
+
+        if (!results.isEmpty()) {
             throw new ValidationException(results);
         }
     }
@@ -47,8 +50,14 @@ public class GlobalValidator {
         votesValidator.validate(requestedParticipants, juries, juryVotes);
     }
 
-    public void validateTelevotes(List<Participant> requestedParticipants, List<Televote> televotes) {
-        televotesValidator.validate(requestedParticipants, televotes);
+    public void validateTelevotes(List<Televote> televotes) {
+        List<ValidationResult> results = televotes.stream()
+                        .map(televotesValidator::validate)
+                .filter(ValidationResult::notValid)
+                                .collect(Collectors.toList());
+        if (!results.isEmpty()) {
+            throw new ValidationException(results);
+        }
     }
 
     public void validateScoreboardName(String name) {

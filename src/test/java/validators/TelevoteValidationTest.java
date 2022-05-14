@@ -2,6 +2,7 @@ package validators;
 
 import models.Jury;
 import models.Participant;
+import models.Televote;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -14,17 +15,17 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class JuryValidationTest {
+public class TelevoteValidationTest {
     @Mock
     private ParticipantRepository participantRepository;
 
-    private JuryValidationService juryValidationService;
+    private TelevotesValidationService televotesValidationService;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        juryValidationService = new DefaultJuryValidationService(participantRepository);
+        televotesValidationService = new DefaultTelevotesValidationService(participantRepository);
 
         var participants = List.of(
                 new Participant("country1", true),
@@ -36,24 +37,36 @@ public class JuryValidationTest {
     @Test
     public void validateJuryHappyCase() {
         // Given
-        var jury = new Jury("country1", "localName1", "realName1", 1);
+        var televote = new Televote("country1", 2);
 
         // When
-        var result = juryValidationService.validate(jury);
+        var result = televotesValidationService.validate(televote);
 
         // Then
         assertEquals(ValidationResult.valid(), result);
     }
 
     @Test
-    public void validateJuryError() {
+    public void validateJuryErrorNotFound() {
         // Given
-        var jury = new Jury("country3", "localName1", "realName1", 1);
+        var televote = new Televote("country3", 1);
 
         // When
-        var result = juryValidationService.validate(jury);
+        var result = televotesValidationService.validate(televote);
 
         // Then
-        assertEquals(ValidationResult.invalid("Jury realName1 is assigned to an invalid country: country3"), result);
+        assertEquals(ValidationResult.invalid("Televote voting for non-existent country: country3"), result);
+    }
+
+    @Test
+    public void validateJuryErrorNotInFinal() {
+        // Given
+        var televote = new Televote("country2", 2);
+
+        // When
+        var result = televotesValidationService.validate(televote);
+
+        // Then
+        assertEquals(ValidationResult.invalid("Televote voting for eliminated country: country2"), result);
     }
 }

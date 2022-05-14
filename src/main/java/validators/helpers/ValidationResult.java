@@ -1,6 +1,5 @@
-package validators;
+package validators.helpers;
 
-import lombok.AllArgsConstructor;
 import lombok.Value;
 
 @Value

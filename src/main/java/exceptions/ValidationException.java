@@ -1,7 +1,7 @@
 package exceptions;
 
 import com.beust.jcommander.Strings;
-import validators.ValidationResult;
+import validators.helpers.ValidationResult;
 
 import java.util.List;
 import java.util.stream.Collectors;
