@@ -1,5 +1,7 @@
 package repositories.common;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -10,6 +12,7 @@ import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import config.ConfigRepository;
 import exceptions.InvalidPrivateKeyException;
 import exceptions.NoValidVotesFoundException;
@@ -27,18 +30,22 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static constants.GoogleSheetsConstants.GS_PARTICIPANTS_RANGE;
+import static constants.GoogleSheetsConstants.GS_VOTES_RANGE;
 
+
+@Singleton
 @Slf4j
-public class GoogleFormCommonRepository extends BaseRepository {
-    private final String spreadsheetId;
-    private final String spreadsheetRange;
+public class GoogleFormCommonRepository {
     private final ConfigRepository configRepository;
+    private final Cache<String, List<GoogleSheetsVote>> voteCache;
+    private final Cache<String, List<GoogleSheetsParticipant>> participantsCache;
 
     @Inject
-    public GoogleFormCommonRepository(String spreadsheetConf, String spreadsheetRange, ConfigRepository configRepository) {
-        this.spreadsheetId = configRepository.getString(spreadsheetConf);
-        this.spreadsheetRange = spreadsheetRange;
+    public GoogleFormCommonRepository(ConfigRepository configRepository) {
         this.configRepository = configRepository;
+        this.voteCache = Caffeine.newBuilder().build();
+        this.participantsCache = Caffeine.newBuilder().build();
     }
 
     private PrivateKey getKey() throws Exception {
@@ -76,16 +83,45 @@ public class GoogleFormCommonRepository extends BaseRepository {
     }
 
     public List<GoogleSheetsVote> getGoogleSheetsVotes() {
-        return this.getRows(GoogleSheetsVote::new);
+        String spreadsheetId = configRepository.getString("googleSheets.sheetIDs.votes");
+        String spreadsheetRange = GS_VOTES_RANGE;
+        String key = buildKey(spreadsheetId, spreadsheetRange);
+
+        List<GoogleSheetsVote> cachedResult = voteCache.getIfPresent(key);
+        if (cachedResult == null) {
+            log.info("Downloading Google Sheets votes");
+            var result = getRows(spreadsheetId, spreadsheetRange, GoogleSheetsVote::new);
+            voteCache.put(key, result);
+            return result;
+        }
+        log.info("Loading Google Sheets votes from cache");
+        return cachedResult;
     }
 
     public List<GoogleSheetsParticipant> getGoogleSheetsParticipants() {
-        return this.getRows(GoogleSheetsParticipant::new);
+        String spreadsheetId = configRepository.getString("googleSheets.sheetIDs.participants");
+        String spreadsheetRange = GS_PARTICIPANTS_RANGE;
+        String key = buildKey(spreadsheetId, spreadsheetRange);
+
+        List<GoogleSheetsParticipant> cachedResult = participantsCache.getIfPresent(key);
+        if (cachedResult == null) {
+            log.info("Downloading Google Sheets participants");
+            var result = getRows(spreadsheetId,spreadsheetRange,GoogleSheetsParticipant::new);
+            participantsCache.put(key, result);
+            return result;
+        }
+        log.info("Loading Google Sheets participants from cache");
+        return cachedResult;
+    }
+
+    private String buildKey(String spreadsheetId, String spreadsheetRange) {
+        return spreadsheetId + "." + spreadsheetRange;
     }
 
     @SneakyThrows
-    private <T> List<T> getRows(Function<List<String>, T> mapper) {
+    private <T> List<T> getRows(String spreadsheetId, String spreadsheetRange, Function<List<String>, T> mapper) {
         Sheets sheetsService = getSheetsService();
+
         ValueRange response = sheetsService.spreadsheets().values()
                 .get(spreadsheetId, spreadsheetRange)
                 .execute();

@@ -13,15 +13,17 @@ import java.util.List;
 import static constants.GoogleSheetsConstants.GS_PARTICIPANTS_RANGE;
 
 @Slf4j
-public class GoogleFormJuryRepository extends GoogleFormCommonRepository implements JuryRepository {
+public class GoogleFormJuryRepository implements JuryRepository {
 
+    private final GoogleFormCommonRepository googleRepository;
     private final GSParticipantMapper mapper;
     private List<Jury> resultCached;
 
     @Inject
-    public GoogleFormJuryRepository(GSParticipantMapper mapper, ConfigRepository configRepository) {
-        super("googleSheets.sheetIDs.participants", GS_PARTICIPANTS_RANGE, configRepository);
+    public GoogleFormJuryRepository(GSParticipantMapper mapper,
+                                    GoogleFormCommonRepository googleRepository) {
         this.mapper = mapper;
+        this.googleRepository = googleRepository;
     }
 
     @Override
@@ -29,7 +31,7 @@ public class GoogleFormJuryRepository extends GoogleFormCommonRepository impleme
         if (resultCached != null) {
             return resultCached;
         }
-        List<GoogleSheetsParticipant> googleSheetsParticipants = getGoogleSheetsParticipants();
+        List<GoogleSheetsParticipant> googleSheetsParticipants = googleRepository.getGoogleSheetsParticipants();
         resultCached = mapper.buildJuries(googleSheetsParticipants);
         log.debug("Fetched {} juries from Google Sheets", resultCached.size());
         return resultCached;

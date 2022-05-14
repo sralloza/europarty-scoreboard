@@ -13,18 +13,20 @@ import java.util.List;
 import static constants.GoogleSheetsConstants.GS_PARTICIPANTS_RANGE;
 
 @Slf4j
-public class GoogleFormParticipantRepository extends GoogleFormCommonRepository implements ParticipantRepository {
+public class GoogleFormParticipantRepository implements ParticipantRepository {
     private final GSParticipantMapper mapper;
+    private final GoogleFormCommonRepository googleRepository;
 
     @Inject
-    public GoogleFormParticipantRepository(GSParticipantMapper mapper, ConfigRepository configRepository) {
-        super("googleSheets.sheetIDs.participants", GS_PARTICIPANTS_RANGE, configRepository);
+    public GoogleFormParticipantRepository(GSParticipantMapper mapper,
+                                           GoogleFormCommonRepository googleRepository) {
         this.mapper = mapper;
+        this.googleRepository = googleRepository;
     }
 
     @Override
     public List<Participant> getParticipants() {
-        List<GoogleSheetsParticipant> googleSheetsParticipants = getGoogleSheetsParticipants();
+        List<GoogleSheetsParticipant> googleSheetsParticipants = googleRepository.getGoogleSheetsParticipants();
         log.debug("Fetched {} participants from Google Sheets", googleSheetsParticipants.size());
         return mapper.buildParticipants(googleSheetsParticipants);
     }

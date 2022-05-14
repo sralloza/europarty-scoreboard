@@ -1,7 +1,6 @@
 package repositories.vote;
 
 import com.google.inject.Inject;
-import config.ConfigRepository;
 import lombok.extern.slf4j.Slf4j;
 import mappers.GSVoteMapper;
 import models.GoogleSheetsVote;
@@ -11,21 +10,21 @@ import repositories.common.GoogleFormCommonRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static constants.GoogleSheetsConstants.GS_VOTES_RANGE;
-
 @Slf4j
-public class GoogleFormVoteRepository extends GoogleFormCommonRepository implements VoteRepository {
+public class GoogleFormVoteRepository implements VoteRepository {
     private final GSVoteMapper mapper;
+    private final GoogleFormCommonRepository googleRepository;
 
     @Inject
-    public GoogleFormVoteRepository(GSVoteMapper mapper, ConfigRepository configRepository) {
-        super("googleSheets.sheetIDs.votes", GS_VOTES_RANGE, configRepository);
+    public GoogleFormVoteRepository(GSVoteMapper mapper,
+                                    GoogleFormCommonRepository googleRepository) {
         this.mapper = mapper;
+        this.googleRepository = googleRepository;
     }
 
     @Override
     public List<Vote> getJuryVotes() {
-        List<GoogleSheetsVote> googleSheetsVotes = getGoogleSheetsVotes();
+        List<GoogleSheetsVote> googleSheetsVotes = googleRepository.getGoogleSheetsVotes();
         log.debug("Fetched {} votes from Google Sheets", googleSheetsVotes.size());
         return googleSheetsVotes.stream()
                 .map(mapper::buildVote)

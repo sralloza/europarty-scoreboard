@@ -13,18 +13,20 @@ import java.util.List;
 import static constants.GoogleSheetsConstants.GS_VOTES_RANGE;
 
 @Slf4j
-public class GoogleFormTelevoteRepository extends GoogleFormCommonRepository implements TelevoteRepository {
+public class GoogleFormTelevoteRepository implements TelevoteRepository {
     private final GSVoteMapper mapper;
+    private final GoogleFormCommonRepository googleRepository;
 
     @Inject
-    public GoogleFormTelevoteRepository(GSVoteMapper mapper, ConfigRepository configRepository) {
-        super("googleSheets.sheetIDs.televotes", GS_VOTES_RANGE, configRepository);
+    public GoogleFormTelevoteRepository(GSVoteMapper mapper,
+                                        GoogleFormCommonRepository googleRepository) {
         this.mapper = mapper;
+        this.googleRepository = googleRepository;
     }
 
     @Override
     public List<Televote> getTelevotes() {
-        List<GoogleSheetsVote> googleSheetsVotes = getGoogleSheetsVotes();
+        List<GoogleSheetsVote> googleSheetsVotes = googleRepository.getGoogleSheetsVotes();
         log.debug("Fetched {} televotes in Google Sheets", googleSheetsVotes.size());
         return mapper.buildTelevotes(googleSheetsVotes);
     }
