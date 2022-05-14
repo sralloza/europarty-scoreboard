@@ -83,6 +83,18 @@ public class VoteValidationTest {
     }
 
     @Test
+    public void validateJuryErrorJuryNotFoundSkip() {
+        // Given
+        var vote = new Vote("invalidName", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C10", "C12");
+        voteValidationService.setValidatingTelevote(true);
+
+        // When
+        var result = voteValidationService.validate(vote);
+
+        // Then
+        assertEquals(ValidationResult.valid(), result);
+    }
+    @Test
     public void validateJuryErrorCountryNotFound() {
         // Given
         var vote = new Vote("localName1", "invalid", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C10", "C12");
