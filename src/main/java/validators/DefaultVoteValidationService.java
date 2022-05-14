@@ -81,11 +81,11 @@ public class DefaultVoteValidationService implements VoteValidationService {
                     .map(countryVoted -> Map.entry(countryVoted, participants.stream()
                             .filter(p -> countryVoted.equals(p.getName()))
                             .findAny()))
-                    .filter(entry -> entry.getValue().isPresent())
+                    .filter(entry -> entry.getValue().isEmpty())
                     .map(Map.Entry::getKey)
                     .collect(Collectors.toList());
 
-            if (result.isEmpty()) {
+            if (!result.isEmpty()) {
                 return ValidationResult.invalid(toValidate.getJuryName() +
                         " voted for countries that are not registered: " + Strings.join(", ", result));
             }

@@ -2,7 +2,6 @@ package validators;
 
 import models.Jury;
 import models.Participant;
-import models.Televote;
 import models.Vote;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,7 +71,7 @@ public class VoteValidationTest {
     }
 
     @Test
-    public void validateJuryErrorNotFound() {
+    public void validateJuryErrorJuryNotFound() {
         // Given
         var vote = new Vote("invalidName", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C10", "C12");
 
@@ -81,6 +80,18 @@ public class VoteValidationTest {
 
         // Then
         assertEquals(ValidationResult.invalid("Vote registered to user that doesn't exist: invalidName"), result);
+    }
+
+    @Test
+    public void validateJuryErrorCountryNotFound() {
+        // Given
+        var vote = new Vote("localName1", "invalid", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C10", "C12");
+
+        // When
+        var result = voteValidationService.validate(vote);
+
+        // Then
+        assertEquals(ValidationResult.invalid("localName1 voted for countries that are not registered: invalid"), result);
     }
 
     @Test
