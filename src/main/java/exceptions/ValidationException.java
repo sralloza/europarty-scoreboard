@@ -12,6 +12,7 @@ public class ValidationException extends RuntimeException {
                 .filter(ValidationResult::notValid)
                 .map(ValidationResult::getErrorMsg)
                 .map(t -> "\n - " + t)
+                .sorted()
                 .collect(Collectors.toList())) + "\n");
     }
 }

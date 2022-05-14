@@ -94,4 +94,16 @@ public class VoteValidationTest {
         // Then
         assertEquals(ValidationResult.invalid("localName1 voted for countries that are not finalists: F1, F3"), result);
     }
+
+    @Test
+    public void validateJuryErrorDuplicates() {
+        // Given
+        var vote = new Vote("localName1", "C1", "C1", "C4", "C4", "C5", "C6", "C7", "C8", "C10", "C12");
+
+        // When
+        var result = voteValidationService.validate(vote);
+
+        // Then
+        assertEquals(ValidationResult.invalid("localName1 voted for duplicated countries: C4, C1"), result);
+    }
 }

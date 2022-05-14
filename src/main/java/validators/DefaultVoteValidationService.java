@@ -108,6 +108,7 @@ public class DefaultVoteValidationService implements VoteValidationService {
                     .map(Optional::get)
                     .filter(participant -> !participant.isFinalist())
                     .map(Participant::getName)
+                    .distinct()
                     .collect(Collectors.toList());
 
             if (!votesNotInFinal.isEmpty()) {
