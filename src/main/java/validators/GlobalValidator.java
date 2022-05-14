@@ -14,17 +14,23 @@ public class GlobalValidator {
     private final JuryValidationService juriesValidator;
     private final VotesValidator votesValidator;
     private final TelevotesValidator televotesValidator;
-    private final ScoreboardNameValidator scoreboardNameValidator;
+    private final ScoreboardValidationService scoreboardNameValidator;
 
     @Inject
     public GlobalValidator(JuryValidationService juriesValidator,
                            VotesValidator votesValidator,
                            TelevotesValidator televotesValidator,
-                           ScoreboardNameValidator scoreboardNameValidator) {
+                           ScoreboardValidationService scoreboardNameValidator) {
         this.juriesValidator = juriesValidator;
         this.votesValidator = votesValidator;
         this.televotesValidator = televotesValidator;
         this.scoreboardNameValidator = scoreboardNameValidator;
+    }
+
+    public void validateData(List<Jury> juries,
+                             List<Participant> requestedParticipants,
+                             List<Vote> juryVotes,
+                             List<Televote> televotes) {
     }
 
     public void validateJuries(List<Jury> juries) {
@@ -46,6 +52,9 @@ public class GlobalValidator {
     }
 
     public void validateScoreboardName(String name) {
-        scoreboardNameValidator.validate(name);
+        var result = scoreboardNameValidator.validate(name);
+        if (result.notValid()) {
+            throw new ValidationException(List.of(result));
+        }
     }
 }
