@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 
 @Slf4j
-public class GoogleFormCommonRepository {
+public class GoogleFormCommonRepository extends BaseRepository {
     private final String spreadsheetId;
     private final String spreadsheetRange;
     private final ConfigRepository configRepository;

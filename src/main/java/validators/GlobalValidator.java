@@ -1,21 +1,23 @@
 package validators;
 
 import com.google.inject.Inject;
+import exceptions.ValidationException;
 import models.Jury;
 import models.Participant;
 import models.Televote;
 import models.Vote;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GlobalValidator {
-    private final JuriesValidator juriesValidator;
+    private final JuryValidationService juriesValidator;
     private final VotesValidator votesValidator;
     private final TelevotesValidator televotesValidator;
     private final ScoreboardNameValidator scoreboardNameValidator;
 
     @Inject
-    public GlobalValidator(JuriesValidator juriesValidator,
+    public GlobalValidator(JuryValidationService juriesValidator,
                            VotesValidator votesValidator,
                            TelevotesValidator televotesValidator,
                            ScoreboardNameValidator scoreboardNameValidator) {
@@ -25,8 +27,14 @@ public class GlobalValidator {
         this.scoreboardNameValidator = scoreboardNameValidator;
     }
 
-    public void validateJuries(List<Participant> savedParticipants, List<Jury> juries) {
-        juriesValidator.validate(savedParticipants, juries);
+    public void validateJuries(List<Jury> juries) {
+        List<ValidationResult> results = new ArrayList<>();
+        for (Jury jury : juries) {
+            results.add(juriesValidator.validate(jury));
+        }
+        if (results.stream().anyMatch(ValidationResult::notValid)) {
+            throw new ValidationException(results);
+        }
     }
 
     public void validateVotes(List<Participant> requestedParticipants, List<Jury> juries, List<Vote> juryVotes) {

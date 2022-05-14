@@ -9,6 +9,8 @@ import repositories.televote.GoogleFormTelevoteRepository;
 import repositories.televote.TelevoteRepository;
 import repositories.vote.GoogleFormVoteRepository;
 import repositories.vote.VoteRepository;
+import validators.DefaultJuryValidationService;
+import validators.JuryValidationService;
 
 public class GoogleFormModule extends AbstractModule {
     @Override
@@ -17,6 +19,9 @@ public class GoogleFormModule extends AbstractModule {
         bind(ParticipantRepository.class).to(GoogleFormParticipantRepository.class);
         bind(TelevoteRepository.class).to(GoogleFormTelevoteRepository.class);
         bind(VoteRepository.class).to(GoogleFormVoteRepository.class);
+
+        bind(JuryValidationService.class).to(DefaultJuryValidationService.class);
+
         bind(Config.class).toInstance(ConfigFactory.load());
     }
 }
