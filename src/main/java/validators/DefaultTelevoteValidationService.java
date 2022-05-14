@@ -10,11 +10,11 @@ import validators.helpers.ValidationStep;
 import javax.inject.Inject;
 import java.util.Optional;
 
-public class DefaultTelevotesValidationService implements TelevotesValidationService {
+public class DefaultTelevoteValidationService implements TelevotesValidationService {
     private final ParticipantRepository participantRepository;
 
     @Inject
-    public DefaultTelevotesValidationService(ParticipantRepository participantRepository) {
+    public DefaultTelevoteValidationService(ParticipantRepository participantRepository) {
         this.participantRepository = participantRepository;
     }
 

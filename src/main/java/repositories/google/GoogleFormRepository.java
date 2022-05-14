@@ -1,4 +1,4 @@
-package repositories.common;
+package repositories.google;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -36,13 +36,13 @@ import static constants.GoogleSheetsConstants.GS_VOTES_RANGE;
 
 @Singleton
 @Slf4j
-public class GoogleFormCommonRepository {
+public class GoogleFormRepository {
     private final ConfigRepository configRepository;
     private final Cache<String, List<GoogleSheetsVote>> voteCache;
     private final Cache<String, List<GoogleSheetsParticipant>> participantsCache;
 
     @Inject
-    public GoogleFormCommonRepository(ConfigRepository configRepository) {
+    public GoogleFormRepository(ConfigRepository configRepository) {
         this.configRepository = configRepository;
         this.voteCache = Caffeine.newBuilder().build();
         this.participantsCache = Caffeine.newBuilder().build();
@@ -82,8 +82,16 @@ public class GoogleFormCommonRepository {
                 .build();
     }
 
+    public List<GoogleSheetsVote> getGoogleSheetsTelevotes() {
+        return getGoogleSheetsVotesByConfigKey("googleSheets.sheetIDs.televotes");
+    }
+
     public List<GoogleSheetsVote> getGoogleSheetsVotes() {
-        String spreadsheetId = configRepository.getString("googleSheets.sheetIDs.votes");
+        return getGoogleSheetsVotesByConfigKey("googleSheets.sheetIDs.votes");
+    }
+
+    private List<GoogleSheetsVote> getGoogleSheetsVotesByConfigKey(String configKey) {
+        String spreadsheetId = configRepository.getString(configKey);
         String spreadsheetRange = GS_VOTES_RANGE;
         String key = buildKey(spreadsheetId, spreadsheetRange);
 

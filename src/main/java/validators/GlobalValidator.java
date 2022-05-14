@@ -3,7 +3,6 @@ package validators;
 import com.google.inject.Inject;
 import exceptions.ValidationException;
 import models.Jury;
-import models.Participant;
 import models.Televote;
 import models.Vote;
 import validators.helpers.ValidationResult;
@@ -11,59 +10,78 @@ import validators.helpers.ValidationResult;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class GlobalValidator {
     private final JuryValidationService juriesValidator;
-    private final VotesValidator votesValidator;
+    private final VotesValidationService votesValidator;
+    private final VoteValidationService voteValidator;
     private final TelevotesValidationService televotesValidator;
     private final ScoreboardValidationService scoreboardNameValidator;
 
     @Inject
     public GlobalValidator(JuryValidationService juriesValidator,
-                           VotesValidator votesValidator,
+                           VotesValidationService votesValidator,
+                           VoteValidationService voteValidator,
                            TelevotesValidationService televotesValidator,
                            ScoreboardValidationService scoreboardNameValidator) {
         this.juriesValidator = juriesValidator;
         this.votesValidator = votesValidator;
+        this.voteValidator = voteValidator;
         this.televotesValidator = televotesValidator;
         this.scoreboardNameValidator = scoreboardNameValidator;
     }
 
     public void validateData(List<Jury> juries,
-                             List<Participant> requestedParticipants,
                              List<Vote> juryVotes,
-                             List<Televote> televotes) {
-    }
+                             List<Televote> televotes,
+                             String scoreboardName) {
+        var resultJuries = validateJuries(juries);
+        var resultVotes = validateVotes(juryVotes);
+        var resultTelevotes = validateTelevotes(televotes);
+        var resultScoreboardName = validateScoreboardName(scoreboardName);
 
-    public void validateJuries(List<Jury> juries) {
-        List<ValidationResult> results = juries.stream()
-                .map(juriesValidator::validate)
+        List<ValidationResult> results = new ArrayList<>();
+        results.addAll(resultJuries);
+        results.addAll(resultVotes);
+        results.addAll(resultTelevotes);
+        results.addAll(resultScoreboardName);
+
+        var filtered = results.stream()
                 .filter(ValidationResult::notValid)
                 .collect(Collectors.toList());
 
-        if (!results.isEmpty()) {
-            throw new ValidationException(results);
+        if (!filtered.isEmpty()) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException ignored) {
+            }
+            throw new ValidationException(filtered);
         }
     }
 
-    public void validateVotes(List<Participant> requestedParticipants, List<Jury> juries, List<Vote> juryVotes) {
-        votesValidator.validate(requestedParticipants, juries, juryVotes);
+    private List<ValidationResult> validateJuries(List<Jury> juries) {
+        return juries.stream()
+                .map(juriesValidator::validate)
+                .collect(Collectors.toList());
     }
 
-    public void validateTelevotes(List<Televote> televotes) {
-        List<ValidationResult> results = televotes.stream()
-                        .map(televotesValidator::validate)
-                .filter(ValidationResult::notValid)
-                                .collect(Collectors.toList());
-        if (!results.isEmpty()) {
-            throw new ValidationException(results);
-        }
+    private List<ValidationResult> validateVotes(List<Vote> juryVotes) {
+        var result1 = votesValidator.validate(juryVotes);
+        var results2 = juryVotes.stream()
+                .map(voteValidator::validate);
+
+        return Stream.concat(results2, Stream.of(result1))
+                .collect(Collectors.toList());
     }
 
-    public void validateScoreboardName(String name) {
-        var result = scoreboardNameValidator.validate(name);
-        if (result.notValid()) {
-            throw new ValidationException(List.of(result));
-        }
+    private List<ValidationResult> validateTelevotes(List<Televote> televotes) {
+        return televotes.stream()
+                .map(televotesValidator::validate)
+                .collect(Collectors.toList());
+    }
+
+    private List<ValidationResult> validateScoreboardName(String name) {
+        return List.of(scoreboardNameValidator.validate(name));
     }
 }

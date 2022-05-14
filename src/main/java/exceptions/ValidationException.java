@@ -8,9 +8,10 @@ import java.util.stream.Collectors;
 
 public class ValidationException extends RuntimeException {
     public ValidationException(List<ValidationResult> results) {
-        super("Validation failed: " + Strings.join("\n - ", results.stream()
+        super("\nValidation failed:" + Strings.join("", results.stream()
                 .filter(ValidationResult::notValid)
                 .map(ValidationResult::getErrorMsg)
-                .collect(Collectors.toList())));
+                .map(t -> "\n - " + t)
+                .collect(Collectors.toList())) + "\n");
     }
 }

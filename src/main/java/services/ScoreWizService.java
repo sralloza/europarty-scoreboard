@@ -56,17 +56,12 @@ public class ScoreWizService {
         if (configRepository.getBoolean("general.test")) {
             name += " - Test " + LocalDateTime.now();
         }
-        validator.validateScoreboardName(name);
-
         List<Jury> juries = juryRepository.getJuriesSorted();
         List<Participant> participants = participantRepository.getParticipants();
-        validator.validateJuries(juries);
-
         List<Vote> votes = votesRepository.getJuryVotes();
-        validator.validateVotes(participants, juries, votes);
-
         List<Televote> televotes = televoteRepository.getTelevotes();
-        validator.validateTelevotes(televotes);
+
+        validator.validateData(juries, votes, televotes, name);
 
         scorewizRepository.login();
         scorewizRepository.createScoreboard(name);
@@ -112,13 +107,9 @@ public class ScoreWizService {
 
     public void validateData() {
         List<Jury> juries = juryRepository.getJuriesSorted();
-        List<Participant> participants = participantRepository.getParticipants();
-        validator.validateJuries(juries);
-
         List<Vote> votes = votesRepository.getJuryVotes();
-        validator.validateVotes(participants, juries, votes);
-
         List<Televote> televotes = televoteRepository.getTelevotes();
-        validator.validateTelevotes(televotes);
+
+        validator.validateData(juries, votes, televotes, "");
     }
 }

@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import mappers.GSVoteMapper;
 import models.GoogleSheetsVote;
 import models.Vote;
-import repositories.common.GoogleFormCommonRepository;
+import repositories.google.GoogleFormRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GoogleFormVoteRepository implements VoteRepository {
     private final GSVoteMapper mapper;
-    private final GoogleFormCommonRepository googleRepository;
+    private final GoogleFormRepository googleRepository;
 
     @Inject
     public GoogleFormVoteRepository(GSVoteMapper mapper,
-                                    GoogleFormCommonRepository googleRepository) {
+                                    GoogleFormRepository googleRepository) {
         this.mapper = mapper;
         this.googleRepository = googleRepository;
     }

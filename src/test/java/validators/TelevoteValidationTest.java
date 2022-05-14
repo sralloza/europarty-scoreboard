@@ -1,6 +1,5 @@
 package validators;
 
-import models.Jury;
 import models.Participant;
 import models.Televote;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +24,7 @@ public class TelevoteValidationTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        televotesValidationService = new DefaultTelevotesValidationService(participantRepository);
+        televotesValidationService = new DefaultTelevoteValidationService(participantRepository);
 
         var participants = List.of(
                 new Participant("country1", true),

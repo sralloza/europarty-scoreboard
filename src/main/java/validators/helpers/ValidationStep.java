@@ -15,7 +15,7 @@ public abstract class ValidationStep<T> {
 
     public ValidationResult run (T toValidate) {
         if (previousStep != null) {
-            return previousStep.verify(toValidate);
+            return previousStep.run(toValidate);
         }
         return verify(toValidate);
     }

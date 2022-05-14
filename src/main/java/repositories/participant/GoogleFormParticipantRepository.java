@@ -1,25 +1,22 @@
 package repositories.participant;
 
 import com.google.inject.Inject;
-import config.ConfigRepository;
 import lombok.extern.slf4j.Slf4j;
 import mappers.GSParticipantMapper;
 import models.GoogleSheetsParticipant;
 import models.Participant;
-import repositories.common.GoogleFormCommonRepository;
+import repositories.google.GoogleFormRepository;
 
 import java.util.List;
-
-import static constants.GoogleSheetsConstants.GS_PARTICIPANTS_RANGE;
 
 @Slf4j
 public class GoogleFormParticipantRepository implements ParticipantRepository {
     private final GSParticipantMapper mapper;
-    private final GoogleFormCommonRepository googleRepository;
+    private final GoogleFormRepository googleRepository;
 
     @Inject
     public GoogleFormParticipantRepository(GSParticipantMapper mapper,
-                                           GoogleFormCommonRepository googleRepository) {
+                                           GoogleFormRepository googleRepository) {
         this.mapper = mapper;
         this.googleRepository = googleRepository;
     }
