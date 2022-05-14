@@ -36,7 +36,7 @@ public class VotesValidator {
         // 1. The jury must be registered in the list of juries (local name)
         juryVotes.forEach(vote -> {
             Optional<Jury> jury = juries.stream()
-                    .filter(j -> j.getLocalName().equals(vote.getJuryName()))
+                    .filter(j -> j.getLocalName().equalsIgnoreCase(vote.getJuryName()))
                     .findAny();
 
             if (jury.isEmpty()) {
