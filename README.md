@@ -42,3 +42,32 @@ Configuration is managed by environment variables.
 1. Create a new Google Cloud Platform project.
 2. Create a [new service account](https://console.cloud.google.com/iam-admin/serviceaccounts).
 3. Create an ssh key for the created service account. You must select the P12 format.
+
+## Scripts
+
+To launch the application, fill the `.env` file with the required environment variables as shown below.
+
+```env
+SW_USERNAME='libol64870@sartess.com'
+SW_PASSWORD='libol64870@sartess.com'
+GOOGLE_CREDS_EMAIL='example@google.com'
+GS_VOTE_ID='vote-spreadsheet-id'
+GS_TELEVOTE_ID='tele-vote-spreadsheet-id'
+GS_PARTICIPANTS_ID='participants-spreadsheet-id'
+GOOGLE_CREDS_PRIVATE_KEY='raw-private-key-with-\n-characters'
+LOG_LEVEL='DEBUG'
+```
+
+Then, run the following script:
+
+```bash
+scripts/run.sh
+```
+
+The script will:
+
+1. Validate the data in the Google Sheets.
+2. Delete all scoreboards
+3. Create a new scoreboard based on the data in the Google Sheets.
+
+Note: the script will create jar files in the folder `scripts/jars`. To force the script to recompile them, remove the folder.
