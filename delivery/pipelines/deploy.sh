@@ -20,7 +20,7 @@ echo $VAULT_PASSWORD > .vault-pass.txt
 ansible-vault decrypt --vault-password-file=.vault-pass.txt --output=.env .env
 rm .vault-pass.txt
 
-JARS_FOLDER="scripts/jars"
+JARS_FOLDER="delivery/jars"
 DATA_VALIDATION_JAR="$JARS_FOLDER/europarty-data-validation.jar"
 DELETE_FORS_JAR="$JARS_FOLDER/europarty-delete-forms.jar"
 CREATE_FORM_JAR="$JARS_FOLDER/europarty-create-form.jar"

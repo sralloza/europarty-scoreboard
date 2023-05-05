@@ -61,13 +61,13 @@ LOG_LEVEL='DEBUG'
 Then, run the following script:
 
 ```bash
-scripts/run.sh
+delivery/pipelines/deploy.sh <profile> [MODE]
 ```
 
-The script will:
+Where `profile` is the name of the profile to use (see `delivery/profiles` folder) and `MODE` is the mode to use. It can be `all`, `validate` or `skip-delete`. Defaults to `all`.
 
-1. Validate the data in the Google Sheets.
-2. Delete all scoreboards
-3. Create a new scoreboard based on the data in the Google Sheets.
+- `all`: validate the data in the Google Sheets, delete all scoreboards and create a new scoreboard based on the data in the Google Sheets.
+- `validate`: validate the data in the Google Sheets.
+- `skip-delete`: validate the data in the Google Sheets create a new scoreboard based on the data in the Google Sheets without deleting old scoreboards.
 
-Note: the script will create jar files in the folder `scripts/jars`. To force the script to recompile them, remove the folder.
+Note: the script will create jar files in the folder `delivery/jars`. To force the script to recompile them, remove the folder.
