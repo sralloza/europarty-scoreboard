@@ -1,16 +1,24 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
-folder=$(basename $(pwd))
-if [[ "$folder" == "scripts" ]]; then
-  echo "Do not run this script from the scripts folder"
+
+profile=${1?Usage: delivery/pipelines/deploy.sh <profile> [mode]}
+if [[ ! -f delivery/profiles/$profile.env ]]; then
+  echo "Profile $profile not found"
   exit 1
 fi
 
-if [[ ! .env ]]; then
-  echo ".env file does not exist"
+mode=${2:-all}
+validModes=(all validate skip-delete)
+if [[ ! " ${validModes[@]} " =~ " ${mode} " ]]; then
+  echo "Invalid mode $mode"
   exit 1
 fi
+
+cp delivery/profiles/$profile.env .env
+echo $VAULT_PASSWORD > .vault-pass.txt
+ansible-vault decrypt --vault-password-file=.vault-pass.txt --output=.env .env
+rm .vault-pass.txt
 
 JARS_FOLDER="scripts/jars"
 DATA_VALIDATION_JAR="$JARS_FOLDER/europarty-data-validation.jar"
@@ -47,9 +55,18 @@ echo "========== Validating data =========="
 java -jar $DATA_VALIDATION_JAR
 echo "+Data validation completed successfully"
 
-echo "========== Deleting forms ==========="
-java -jar $DELETE_FORS_JAR
-echo "+Forms deleted successfully"
+if [[ $mode == "validate" ]]; then
+  echo "+Skipping delete and create form"
+  exit 0
+fi
+
+if [[ $mode == "skip-delete" ]]; then
+  echo "+Skipping delete forms"
+else
+  echo "========== Deleting forms ==========="
+  java -jar $DELETE_FORS_JAR
+  echo "+Forms deleted successfully"
+fi
 
 echo "========== Creating form ============"
 java -jar $CREATE_FORM_JAR
