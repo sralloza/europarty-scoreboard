@@ -1,0 +1,21 @@
+{
+  "name": "Europarty custom styles",
+  "version": "1.0.0",
+  "description": "Custom styles for Europarty",
+  "manifest_version": 3,
+  "author": "Diego Alloza González",
+  "content_scripts": [
+    {
+      "css": [
+        "styles.css"
+      ],
+      "js": [
+        "jquery.min-3.2.1.js",
+        "run.js"
+      ],
+      "matches": [
+        "https://scorewiz.eu/*"
+      ]
+    }
+  ]
+}
