@@ -11,3 +11,8 @@ span.points {
 span.score {
   font-size: 22px !important;
 }
+
+span.flag img {
+  width: 26px !important;
+  height: 20px !important;
+}
