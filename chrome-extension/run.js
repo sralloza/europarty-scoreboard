@@ -15,4 +15,4 @@ function registerCustomCSS() {
   document.head.appendChild(style);
 }
 
-document.onload = registerCustomJS();
+document.onload = registerCustomCSS();
